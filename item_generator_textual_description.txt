@@ -1,0 +1,12 @@
+Ports/conenctions between modules
+-----------------------
+NAME 			IN/OUT		
+-----------------------
+item_location	OUT
+item_ok			IN
+req_item		IN
+new_item		OUT
+reset			IN
+clk				IN
+
+
