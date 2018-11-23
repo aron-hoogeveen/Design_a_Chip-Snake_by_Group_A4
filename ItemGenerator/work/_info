@@ -1,0 +1,31 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/kahoogeveen/Snake/SnakeGithubRepo/ItemGenerator
+Eitemgenerator
+w1542990914
+DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+R0
+8VHDL/itemGenerator.vhd
+FVHDL/itemGenerator.vhd
+l0
+L4
+Vb?WofRdCzkb5[aH4R0?_70
+!s100 We`o;CHOSAVE2iR4=;KdL3
+OL;C;10.5b;63
+33
+!s110 1542990914
+!i10b 1
+!s108 1542990914.000000
+!s90 -2008|-lower|-explicit|-work|work|VHDL/itemGenerator.vhd|-quiet|-nologo|
+!s107 VHDL/itemGenerator.vhd|
+!i113 0
+o-quiet -nologo -2008 -lower -explicit -work work
+tExplicit 1 CvgOpt 0
