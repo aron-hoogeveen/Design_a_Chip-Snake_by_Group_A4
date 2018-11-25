@@ -1,18 +1,35 @@
 Library vendor : Model Technology
 Maximum unnamed designs : 3
 ENTITY itemgenerator
-    Source modified time: Fri Nov 23 17:35:14 2018
+    Source modified time: Sat Nov 24 15:30:50 2018
     Depends on: P std textio zE1`LPoLg^DX3Oz^4Fj1K3
     Depends on: P ieee std_logic_1164 eNV`TJ_GofJTzYa?f<@Oe1
     Source directory: /home/kahoogeveen/Snake/SnakeGithubRepo/ItemGenerator
     HDL source file: VHDL/itemGenerator.vhd
     Source file: VHDL/itemGenerator.vhd
     Start location: VHDL/itemGenerator.vhd:4
-    Version string: b?WofRdCzkb5[aH4R0?_70
+    Version string: Z9LCX<BiQoLlhDI04obG=3
     Opcode format: 10.5b; VCOM SE-64 Object version 63
     VHDL language standard: 3 (VHDL-2008)
-    Compile time: Fri Nov 23 17:35:14 2018
+    Compile time: Sat Nov 24 15:31:49 2018
     Debug Symbol file exists
     Compiled in vopt flow
     Compile options: -quiet -nologo -2008 -lower -explicit -work work
     Compile defaults: Explicit=1 CvgOpt=0
+  ARCHITECTURE BODY behaviour
+    Source modified time: Sat Nov 24 15:31:47 2018
+    Depends on: E work itemgenerator Z9LCX<BiQoLlhDI04obG=3
+    Depends on: P std textio zE1`LPoLg^DX3Oz^4Fj1K3
+    Depends on: P ieee std_logic_1164 eNV`TJ_GofJTzYa?f<@Oe1
+    HDL source file: VHDL/itemgenerator-behaviour.vhd
+    Source file: VHDL/itemgenerator-behaviour.vhd
+    Start location: VHDL/itemgenerator-behaviour.vhd:4
+    Version string: M=oGKTVD_^<F;]TK[DU[m0
+    Opcode format: 10.5b; VCOM SE-64 Object version 63
+    VHDL language standard: 3 (VHDL-2008)
+    Compile time: Sat Nov 24 15:31:50 2018
+    Debug Symbol file exists
+    Compiled in vopt flow
+    Compile options: -quiet -nologo -2008 -lower -explicit -work work
+    Compile defaults: Explicit=1 CvgOpt=0
+    Source directory: /home/kahoogeveen/Snake/SnakeGithubRepo/ItemGenerator
