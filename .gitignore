@@ -1,2 +1,12 @@
-# ignore the lock files from GoWithTheFlow
+# Folders to exclude
+**/backend
+**/work
+**/components
+
+# Files to exclude
 *.lock
+*.ini
+*transcript
+**/vdir.mess
+**/vsim.wlf
+**/vsim_id
