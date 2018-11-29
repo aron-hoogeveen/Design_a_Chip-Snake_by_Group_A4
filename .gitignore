@@ -2,6 +2,7 @@
 **/backend
 **/work
 **/components
+**/datasets
 
 # Files to exclude
 *.lock
