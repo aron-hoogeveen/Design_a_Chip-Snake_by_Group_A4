@@ -1,4 +1,0 @@
-rm -rf fv
-rm -rf libscore_work
-rm -f genus.cmd*
-rm -f genus.log*
