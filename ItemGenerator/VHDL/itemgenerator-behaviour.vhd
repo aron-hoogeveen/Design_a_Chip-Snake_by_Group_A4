@@ -2,8 +2,8 @@ library IEEE;
 use IEEE.std_logic_1164.ALL;
 
 architecture behaviour of itemgenerator is
-component ig_storage is 
-    port (clk, data_in, enable : in std_logic; data_out : out std_logic);
+component shift_register is
+    port (clk, reset, enable, D : in std_logic; Q : out std_logic_vector(11 downto 0));
 end component;
 
     type itemGenerator_state is (IDLE, GEN_TYPE, GEN_LOC, SEND_LOC);
@@ -25,12 +25,13 @@ begin
     begin
         case state is
             when IDLE =>
-                -- All outputs are zero
+                -- Initialize outputs
                 item_location <= (others => '0');
                 new_item <= (others => '0');
                 ack_req <= '0';
                 count_start <= '0';
                 storage_enable <= '0';
+                D <= '0';
 
                 -- Now check if snake wants us to generate a new item (and what
                 -- for type of item)
@@ -38,10 +39,12 @@ begin
                     -- Generate a food item ("00")
 
 
-
-                    ack_req <= '1';                 -- Let Snake know that we 
-                                                    -- proccessed the request
-                    new_state <= GEN_LOC;
+                    -- Let Snake know that we proccessed the request
+                    ack_req <= '1';
+                    
+                    -- Now loop through the states that put the item type bits 
+                    -- into the shift register
+                    new_state <= SHIFT_FOOD_ONE;
                 elsif (req_item = "11") then
                     -- Start the counter. After the counter finishes generate
                     -- the power-up
@@ -57,6 +60,7 @@ begin
                 else
                     new_state <= IDLE;
                 end if;
+
             when GEN_TYPE =>
                 item_location <= (others => '0');
                 new_item <= (others => '0');
@@ -69,6 +73,33 @@ begin
                 -- insert code for the above mentioned process.
 
                 new_state <= GEN_LOC;
+
+            when SHIFT_FOOD_ONE =>
+                -- Initialize outputs
+                item_location <= (others => '0');
+                new_item <= (others => '0');
+                ack_req <= '0';
+                count_start <= '0';
+
+                -- Shift the LSB of food ("00") into the SR 
+                storage_enable <= '1';
+                D <= '0';
+
+                new_state <= SHIFT_FOOD_TWO;
+
+            when SHIFT_FOOD_TWO =>
+                -- Initialize outputs
+                item_location <= (others => '0');
+                new_item <= (others => '0');
+                ack_req <= '0';
+                count_start <= '0';
+
+                -- Shift the second bit of food ("00") into the SR 
+                storage_enable <= '1';
+                D <= '0';
+
+                new_state <= GEN_LOC;
+
             when GEN_LOC =>
                 new_item <= (others => '0');
                 ack_req <= '0';
@@ -83,6 +114,7 @@ begin
 
                 -- If the new location is available, send it to the Storage
                 new_state <= SEND_LOC;
+
             when SEND_LOC =>
                 item_location <= (others => '0');
                 ack_req <= '0';
