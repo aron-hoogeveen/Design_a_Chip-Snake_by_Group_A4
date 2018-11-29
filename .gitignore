@@ -2,11 +2,13 @@
 **/backend
 **/work
 **/components
+**/datasets
 
 # Files to exclude
 *.lock
 *.ini
 *transcript
-**/vdir.mess
+*.mess
 **/vsim.wlf
 **/vsim_id
+*hidden*
