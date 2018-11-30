@@ -6,9 +6,15 @@ component shift_register is
     port (clk, reset, enable, D : in std_logic; Q : out std_logic_vector(11 downto 0));
 end component;
 
+component counter4 is
+    port (clk, reset, enable : in std_logic; z_out: out std_logic_vector(3 downto 0));
+end component;
+
     type itemGenerator_state is (IDLE, GEN_TYPE, GEN_LOC, SEND_LOC);
     signal state, new_state: itemGenerator_state;
+    signal counter_out: std_logic;
 begin
+    count4: counter4 port map ();
     lbl1: process (clk)
     begin
         if (rising_edge(clk)) then
@@ -106,14 +112,22 @@ begin
                 count_start <= '0';
 
                 -- Read out random bits from the rng and store them in the new
-                -- location. Then check the new locations availability with 
-                -- Snake.
+                
+                -------------------------------
+                -- Tijdelijk unpolished code --
+                -------------------------------
+                -- Loop through the generation of the 10 bits of the location.
 
-                -- For the above mentioned process a few new states are possibly
-                -- needed.
+                if (loc_count > 11) then
+                    new_state <= SEND_LOC;
+                else
+                    -- Add new random bit to the shift register
+                    enable <= '1';
+                    D <= z;
 
-                -- If the new location is available, send it to the Storage
-                new_state <= SEND_LOC;
+                    loc_count <= loc_count + 1;
+                    new_state <= GEN_LOC;
+                end if;
 
             when SEND_LOC =>
                 item_location <= (others => '0');
