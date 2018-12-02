@@ -11,6 +11,8 @@ begin
         if (rising_edge(clk)) then
             if (reset = '1') then
                 tmp <= "0000";
+            elsif (manual_reset = '1') then
+                tmp <= "0000";
             else
                 if (enable = '1') and (tmp = "1111") then
                     tmp <= "0000";

@@ -7,7 +7,7 @@ component shift_register is
 end component;
 
 component counter4 is
-    port (clk, reset, enable : in std_logic; z_out: out std_logic_vector(3 downto 0));
+    port (clk, reset, manual_reset enable : in std_logic; z_out: out std_logic_vector(3 downto 0));
 end component;
 
     type itemGenerator_state is (IDLE, GEN_TYPE, GEN_LOC, CHECK_LOC, SEND_LOC);
@@ -18,7 +18,7 @@ end component;
 
 begin
     
-    count4: counter4 port map (clk=>clk, reset=>counter_reset, enable=>counter_enable, z_out=>counter_out);
+    count4: counter4 port map (clk=>clk, reset=>reset, manual_reset=>counter_reset, enable=>counter_enable, z_out=>counter_out);
     shift_reg: shift_register port map (clk=>clk, reset=>reset, enable=>register_enable, D=>register_D, Q=>register_Q);
 
     lbl1: process (clk)
