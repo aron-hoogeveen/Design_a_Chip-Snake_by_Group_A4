@@ -8,7 +8,6 @@
 *.lock
 *.ini
 *transcript
-*.mess
 **/vsim.wlf
 **/vsim_id
 *hidden*
