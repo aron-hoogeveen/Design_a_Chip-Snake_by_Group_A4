@@ -191,7 +191,7 @@ begin
                 if (counter_out > 11) then
                     counter_enable <= '0';
                     -- Is it good habit to reset counter already? Or just leave it as it will be resetted just before another location generation anyway?
-                    new_state <= CHECK_LOC_SEND;
+                    new_state <= CHECK_LOC;
                 else
                     -- Add new random bit to the shift register
                     -- There should be implemented a check here, that checks if the x coordinate is not out of bounds, otherwise make it fit inside the grid.
@@ -201,7 +201,7 @@ begin
                     new_state <= GEN_LOC;
                 end if;
 
-            when CHECK_LOC_SEND =>
+            when CHECK_LOC =>
                 --------------------
                 -- Initial values --
                 --------------------
@@ -213,31 +213,17 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
 
-                -- Send the location to the Snake module for availability checking
-                new_location <= '1';            -- DIT MOET NOG EVEN ERGENS VERWERKT WORDEN. ER MOET AFGESPROKEN WORDEN MET DE SNAKE MODULE HOE DEZE FLAG VERSTUURD MOET WORDEN.
-                item_location <= register_Q(11 downto 2); -- Donnot send the first two bits as they only represent the type of item
+                if (location_checked = '0') then
+                    new_location <= '1';
+                    item_location <= register_Q(11 downto 2);
 
-                new_state <= CHECK_LOC_CHECK;
-
-            when CHECK_LOC_CHECK =>
-                --------------------
-                -- Initial values --
-                --------------------
-                item_location <= (others => '0');
-                new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
-                counter_enable <= '0';
-                register_enable <= '0';
-                register_D <= '0';
-
+                    new_state <= CHECK_LOC;
                 if (location_checked = '1') and (item_ok = '1') then 
                     new_state <= SEND_LOC;
                 elsif (location_checked = '1') and (item_ok = '0') then
-                    new_state <= GEN_LOC;       -- OPMERKING: DE 2 BITS VOOR HET TYPE ITEM MOETEN EERST WEER IN HET SHIFT REGISTER WORDEN GESTOPT ANDERS GAAN DEZE VERLOREN EN RAAKT HET TYPE ITEM CORRUPT
+                    new_state <= GEN_LOC;       -- OPMERKING: DE 2 BITS VOOR HET TYPE ITEM MOETEN EERST WEER IN HET SHIFT REGISTER WORDEN GESTOPT ANDERS GAAN DEZE VERLOREN EN RAAKT HET TYPE ITEM CORRUPT (dit kan gewoon gedaan worden door de 2 bits voor item type weer aan de input van het register te geven)
                 else 
-                    -- The location has not yet been checked so wait
-                    new_state <= CHECK_LOC_CHECK;
+                    new_state <= CHECK_LOC;
                 end if;
 
             when SEND_LOC =>
@@ -253,12 +239,12 @@ begin
                 register_D <= '0';
 
                 if (send_storage_succes = '0') then
-                    new_item <= register_out;
-                    new_location_request_to_storage_flag_that_still_needs_to_be_implemented <= '1';
+                    new_item <= register_Q;
+                    request_storage_update <= '1';
 
                     new_state <= SEND_LOC;
                 else 
-                    new_state <= IDLE;
+                    new_state <= IDLE;  -- Het zou kunnen zijn dat er een "elsif(send_storage_succes = '1')" tussen moet, en dat in else staat "new_state <= SEND_LOC"
                 end if;
                 
                 -- If the storage fails to respond with an send_storage_succes, then this will hang forever: IG = kapot
