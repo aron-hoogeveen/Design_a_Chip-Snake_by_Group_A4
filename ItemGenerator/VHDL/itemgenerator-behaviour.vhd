@@ -188,10 +188,13 @@ begin
                 -- Start the internal counter
                 counter_enable <= '1';
 
-                if (counter_Q > 11) then
-                    new_state <= CHECK_LOC;
+                if (counter_out > 11) then
+                    counter_enable <= '0';
+                    -- Is it good habit to reset counter already? Or just leave it as it will be resetted just before another location generation anyway?
+                    new_state <= CHECK_LOC_SEND;
                 else
                     -- Add new random bit to the shift register
+                    -- There should be implemented a check here, that checks if the x coordinate is not out of bounds, otherwise make it fit inside the grid.
                     register_enable <= '1';
                     register_D <= rng_out;
 
