@@ -73,15 +73,63 @@ begin
                 end if;
 
             when GEN_TYPE =>
+                --------------------
+                -- Initial values --
+                --------------------
                 item_location <= (others => '0');
                 new_item <= (others => '0');
                 ack_req <= '0';
-                count_start <= '0';
+                counter_reset <= '0';
+                counter_enable <= '0';
+                register_enable <= '0';
+                register_D <= '0';
 
-                -- read out the random bits from rng_in and store them for use
-                -- in the location that will be send to the Storage
+                if (rng_out = '0') then
+                    -- The only possible outcome of the second bit is now 1, as 0 means 'food'
+                    register_enable <= '1';
+                    register_D <= rng_out;
 
-                -- insert code for the above mentioned process.
+                    new_state <= GEN_TYPE_PU_ONE;
+                else
+                    register_enable <= '1';
+                    register_D <= rng_out;
+
+                    new_state <= GEN_TYPE_TWO;
+                end if;
+
+                --new_state <= GEN_LOC;
+
+            when GEN_TYPE_PU_ONE =>
+                --------------------
+                -- Initial values --
+                --------------------
+                item_location <= (others => '0');
+                new_item <= (others => '0');
+                ack_req <= '0';
+                counter_reset <= '0';
+                counter_enable <= '0';
+                register_enable <= '0';
+                register_D <= '0';
+
+                register_enable <= '1';
+                register_D <= '1';
+
+                new_state <= GEN_LOC;
+
+            when GEN_TYPE_TWO =>
+                --------------------
+                -- Initial values --
+                --------------------
+                item_location <= (others => '0');
+                new_item <= (others => '0');
+                ack_req <= '0';
+                counter_reset <= '0';
+                counter_enable <= '0';
+                register_enable <= '0';
+                register_D <= '0';
+
+                register_enable <= '1';
+                register_D <= rng_out;
 
                 new_state <= GEN_LOC;
 
