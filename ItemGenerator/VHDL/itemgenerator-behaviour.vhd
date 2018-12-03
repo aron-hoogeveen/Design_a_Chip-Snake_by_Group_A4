@@ -7,24 +7,30 @@ component shift_register is
 end component;
 
 component counter4 is
-    port (clk, reset, manual_reset enable : in std_logic; z_out: out std_logic_vector(3 downto 0));
+    port (clk, reset, manual_reset, enable : in std_logic; z_out: out std_logic_vector(3 downto 0));
 end component;
 
-    type itemGenerator_state is (IDLE, GEN_TYPE, GEN_LOC, CHECK_LOC, SEND_LOC);
+-- component rng is
+--    port (etc...)
+-- end component;
+
+    type itemGenerator_state is (IDLE, GEN_TYPE, GEN_TYPE_PU_ONE, GEN_TYPE_PU_TWO, SHIFT_FOOD_ONE, SHIFT_FOOD_TWO, GEN_LOC, SHIFT_REG_ONE, SHIFT_REG_TWO, CHECK_LOC, SEND_LOC);
     signal state, new_state: itemGenerator_state;
     signal counter_out: std_logic_vector(3 downto 0);
-    singal counter_enable, counter_reset, register_enable, register_D, rng_out: std_logic;
+    signal counter_enable, counter_reset, register_enable, register_D: std_logic;
+    --signal rng_out: std_logic;  -- only enable this signal when the rng is finished 
     signal register_Q: std_logic_vector(11 downto 0);
 
 begin
     
     count4: counter4 port map (clk=>clk, reset=>reset, manual_reset=>counter_reset, enable=>counter_enable, z_out=>counter_out);
     shift_reg: shift_register port map (clk=>clk, reset=>reset, enable=>register_enable, D=>register_D, Q=>register_Q);
+    -- IG_rng: rng port map (etc...);
 
     lbl1: process (clk)
     begin
         if (rising_edge(clk)) then
-            if (res = '1') then
+            if (reset = '1') then
                 state <= IDLE;
             else
                 state <= new_state;
@@ -32,40 +38,46 @@ begin
         end if;
     end process;
 
-    lbl2: process(state, req_item, item_ok, rng_in)
+    lbl2: process(state, item_set, req_item, item_loc_clear, item_ok, rng_out, new_item_clear)
     begin
         case state is
             when IDLE =>
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
 
 
                 -- Now check if snake wants us to generate a new item (and what
                 -- for type of item)
-                if (req_item = "10") then
-                    -- Generate a food item ("00")
+                if (item_set = '1') and (req_item = '0') then
+                    -- Generate a food item "00"
 
                     -- Let Snake know that we proccessed the request
-                    ack_req <= '1';
+                    item_clear <= '1';
                     
                     -- Now loop through the states that put the item type bits 
                     -- into the shift register
                     new_state <= SHIFT_FOOD_ONE;
-                elsif (req_item = "11") then
-                    -- Wait between 8 and 16 seconds by listening to two reset signals from the global counter of our final system
+                elsif (item_set = '1') and (req_item = '1') then
+                    -- Wait between 8 and 16 seconds somehow and then generate the pu item
 
-                    ack_req <= '1';
+                    -- Let Snake know that we proccessed the request
+                    item_clear <= '1';
+
                     new_state <= IDLE;
-                elsif (req_item(0) = '0') and (count_done = '1') then
-
+                elsif (item_set = '0') and (count_done = '1') then
+                    -- count_done is defined as the moment that enough time has passed to start generating the pu
                     -- Generate the power-up
                     new_state <= GEN_TYPE;
                 else
@@ -76,13 +88,17 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
 
                 if (rng_out = '0') then
                     -- The only possible outcome of the second bit is now 1, as 0 means 'food'
@@ -94,39 +110,45 @@ begin
                     register_enable <= '1';
                     register_D <= rng_out;
 
-                    new_state <= GEN_TYPE_TWO;
+                    new_state <= GEN_TYPE_PU_TWO;
                 end if;
-
-                --new_state <= GEN_LOC;
 
             when GEN_TYPE_PU_ONE =>
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
 
                 register_enable <= '1';
                 register_D <= '1';
 
                 new_state <= GEN_LOC;
 
-            when GEN_TYPE_TWO =>
+            when GEN_TYPE_PU_TWO =>
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
 
                 register_enable <= '1';
                 register_D <= rng_out;
@@ -137,13 +159,17 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
 
 
                 -- Shift the LSB of food ("00") into the Shift Register
@@ -156,13 +182,17 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
 
                 -- Shift the second bit of food ("00") into the SR 
                 register_enable <= '1';
@@ -174,21 +204,24 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
                 
-                -------------------------------
-                -- Tijdelijk unpolished code --
-                -------------------------------
+
                 -- Start the internal counter
                 counter_enable <= '1';
+                counter_reset <= '0';
 
-                if (counter_out > 11) then
+                if (counter_out > "1011") then      -- "1011" equals decimal 11
                     counter_enable <= '0';
                     -- Is it good habit to reset counter already? Or just leave it as it will be resetted just before another location generation anyway?
                     new_state <= CHECK_LOC;
@@ -205,48 +238,106 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
 
-                if (location_checked = '0') then
-                    new_location <= '1';
-                    item_location <= register_Q(11 downto 2);
+
+                item_loc_set <= '1';
+
+                if (item_loc_clear = '0') then
+                    item_loc <= register_Q(11 downto 2);
 
                     new_state <= CHECK_LOC;
-                if (location_checked = '1') and (item_ok = '1') then 
+                elsif (item_loc_clear = '1') and (item_ok = '1') then 
+                    item_loc_set <= '0';
+
                     new_state <= SEND_LOC;
-                elsif (location_checked = '1') and (item_ok = '0') then
-                    new_state <= GEN_LOC;       -- OPMERKING: DE 2 BITS VOOR HET TYPE ITEM MOETEN EERST WEER IN HET SHIFT REGISTER WORDEN GESTOPT ANDERS GAAN DEZE VERLOREN EN RAAKT HET TYPE ITEM CORRUPT (dit kan gewoon gedaan worden door de 2 bits voor item type weer aan de input van het register te geven)
+                elsif (item_loc_clear = '1') and (item_ok = '0') then
+                    -- Calculate a new location
+                    new_state <= SHIFT_REG_ONE;
                 else 
                     new_state <= CHECK_LOC;
                 end if;
+
+            when SHIFT_REG_ONE =>
+                --------------------
+                -- Initial values --
+                --------------------
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
+                new_item <= (others => '0');
+                -----
+                counter_reset <= '1';
+                counter_enable <= '0';
+                register_enable <= '0';
+                register_D <= '0';
+                -----
+
+                register_enable <= '1';
+                register_D <= register_Q(0);
+
+                new_state <= SHIFT_REG_TWO;
+
+            when SHIFT_REG_TWO =>
+                --------------------
+                -- Initial values --
+                --------------------
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
+                new_item <= (others => '0');
+                -----
+                counter_reset <= '1';
+                counter_enable <= '0';
+                register_enable <= '0';
+                register_D <= '0';
+                -----
+
+                register_enable <= '1';
+                register_D <= register_Q(0);
+
+                new_state <= GEN_LOC;
 
             when SEND_LOC =>
                 --------------------
                 -- Initial values --
                 --------------------
-                item_location <= (others => '0');
+                item_clear <= '0';
+                item_loc_set <= '0';
+                item_loc <= (others => '0');
+                new_item_set <= '0';
                 new_item <= (others => '0');
-                ack_req <= '0';
-                counter_reset <= '0';
+                -----
+                counter_reset <= '1';
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
 
-                if (send_storage_succes = '0') then
+
+                new_item_set <= '1';
+
+                if (new_item_clear = '1') then
+                    new_item_set <= '0';
+
+                    new_state <= IDLE;
+                else 
                     new_item <= register_Q;
-                    request_storage_update <= '1';
 
                     new_state <= SEND_LOC;
-                else 
-                    new_state <= IDLE;  -- Het zou kunnen zijn dat er een "elsif(send_storage_succes = '1')" tussen moet, en dat in else staat "new_state <= SEND_LOC"
                 end if;
-                
                 -- If the storage fails to respond with an send_storage_succes, then this will hang forever: IG = kapot
         end case;
     end process;
