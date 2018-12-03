@@ -16,7 +16,7 @@ end component;
 
     type itemGenerator_state is (IDLE, GEN_TYPE, GEN_TYPE_PU_ONE, GEN_TYPE_PU_TWO, SHIFT_FOOD_ONE, SHIFT_FOOD_TWO, GEN_LOC, SHIFT_REG_ONE, SHIFT_REG_TWO, CHECK_LOC, SEND_LOC);
     signal state, new_state: itemGenerator_state;
-    signal counter_out: std_logic_vector(3 downto 0);
+    signal counter_out, count_comp: std_logic_vector(3 downto 0);
     signal counter_enable, counter_reset, register_enable, register_D: std_logic;
     --signal rng_out: std_logic;  -- only enable this signal when the rng is finished 
     signal register_Q: std_logic_vector(11 downto 0);
@@ -215,19 +215,23 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
+
+                -- For trouble shooting purpose
+                new_item <= (others => '1');
                 
 
                 -- Start the internal counter
                 counter_enable <= '1';
                 counter_reset <= '0';
 
-                if (counter_out > "1011") then      -- "1011" equals decimal 11
+                if (counter_out = count_comp) then      -- "1010" equals decimal 10
                     counter_enable <= '0';
                     -- Is it good habit to reset counter already? Or just leave it as it will be resetted just before another location generation anyway?
                     new_state <= CHECK_LOC;
                 else
                     -- Add new random bit to the shift register
                     -- There should be implemented a check here, that checks if the x coordinate is not out of bounds, otherwise make it fit inside the grid.
+                    counter_enable <= '1';
                     register_enable <= '1';
                     register_D <= rng_out;
 
@@ -341,5 +345,7 @@ begin
                 -- If the storage fails to respond with an send_storage_succes, then this will hang forever: IG = kapot
         end case;
     end process;
+
+    count_comp <= "1010";
 end behaviour;
 
