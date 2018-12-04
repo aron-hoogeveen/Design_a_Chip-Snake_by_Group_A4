@@ -20,6 +20,7 @@ end component;
     signal counter_enable, counter_reset, register_enable, register_D: std_logic;
     --signal rng_out: std_logic;  -- only enable this signal when the rng is finished 
     signal register_Q: std_logic_vector(11 downto 0);
+    signal flagREE: std_logic;
 
 begin
     
@@ -38,7 +39,7 @@ begin
         end if;
     end process;
 
-    lbl2: process(state, item_set, req_item, item_loc_clear, item_ok, rng_out, new_item_clear)
+    lbl2: process(state, item_set, req_item, item_loc_clear, item_ok, rng_out, new_item_clear, counter_out, register_Q)
     begin
         case state is
             when IDLE =>
@@ -215,16 +216,13 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
-
-                -- For trouble shooting purpose
-                new_item <= (others => '1');
                 
 
                 -- Start the internal counter
                 counter_enable <= '1';
                 counter_reset <= '0';
 
-                if (counter_out = count_comp) then      -- "1010" equals decimal 10
+                if (counter_out = "1010") then      -- "1010" equals decimal 10
                     counter_enable <= '0';
                     -- Is it good habit to reset counter already? Or just leave it as it will be resetted just before another location generation anyway?
                     new_state <= CHECK_LOC;

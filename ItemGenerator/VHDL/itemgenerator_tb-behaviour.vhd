@@ -44,9 +44,15 @@ clk <= '1' after 0 ns,
                '1' after 160 ns,
                '0' after 240 ns;
    req_item <= '0' after 0 ns;
-   item_loc_clear <= '0' after 0 ns;
-   item_ok <= '0' after 0 ns;
-   new_item_clear <= '0' after 0 ns;
+   item_loc_clear <= '0' after 0 ns,
+                     '1' after 1440 ns,
+                     '0' after 1520 ns;
+   item_ok <= '0' after 0 ns,
+              '1' after 1440 ns,
+              '0' after 1520 ns;
+   new_item_clear <= '0' after 0 ns,
+                     '1' after 1680 ns,
+                     '0' after 1760 ns;
    rng_out <= '1' after 0 ns;
    count_done <= '0' after 0 ns;
 end behaviour;
