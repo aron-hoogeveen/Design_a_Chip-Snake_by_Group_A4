@@ -1,0 +1,100 @@
+(DELAYFILE
+  (SDFVERSION  "OVI 3.0")
+  (DESIGN      "rng")
+  (DATE        "Wed Dec 05 12:26:46 CET 2018")
+  (VENDOR      "Cadence, Inc.")
+  (PROGRAM     "Genus(TM) Synthesis Solution")
+  (VERSION     "17.11-s014_1")
+  (DIVIDER     .)
+  (VOLTAGE     ::1.62)
+  (PROCESS     "::1.0")
+  (TEMPERATURE ::125.0)
+  (TIMESCALE   1ps)
+  (CELL
+     (CELLTYPE "ND2D1BWP7T")
+     (INSTANCE i1)
+     (DELAY
+        (ABSOLUTE
+          (PORT A1 (::0.0))
+          (PORT A2 (::0.0))
+          (IOPATH A2 ZN (::142) (::120))
+        )
+     )
+  )
+  (CELL
+     (CELLTYPE "INVD4BWP7T")
+     (INSTANCE i2)
+     (DELAY
+        (ABSOLUTE
+          (PORT I (::0.0))
+          (IOPATH I ZN (::80) (::55))
+        )
+     )
+  )
+  (CELL
+     (CELLTYPE "INVD4BWP7T")
+     (INSTANCE i3)
+     (DELAY
+        (ABSOLUTE
+          (PORT I (::0.0))
+          (IOPATH I ZN (::56) (::40))
+        )
+     )
+  )
+  (CELL
+     (CELLTYPE "INVD4BWP7T")
+     (INSTANCE i4)
+     (DELAY
+        (ABSOLUTE
+          (PORT I (::0.0))
+          (IOPATH I ZN (::50) (::37))
+        )
+     )
+  )
+  (CELL
+     (CELLTYPE "INVD4BWP7T")
+     (INSTANCE i5)
+     (DELAY
+        (ABSOLUTE
+          (PORT I (::0.0))
+          (IOPATH I ZN (::36) (::30))
+        )
+     )
+  )
+  (CELL
+     (CELLTYPE "INVD4BWP7T")
+     (INSTANCE ireset)
+     (DELAY
+        (ABSOLUTE
+          (PORT I (::0.0))
+          (IOPATH I ZN (::60) (::41))
+        )
+     )
+  )
+  (CELL
+     (CELLTYPE "CKND4BWP7T")
+     (INSTANCE g3)
+     (DELAY
+        (ABSOLUTE
+          (PORT I (::0.0))
+          (IOPATH I ZN (::1123) (::1141))
+        )
+     )
+  )
+  (CELL
+     (CELLTYPE "DFD1BWP7T")
+     (INSTANCE z_reg)
+     (DELAY
+        (ABSOLUTE
+          (PORT CP (::0.0))
+          (PORT D (::0.0))
+          (IOPATH CP Q (::306) (::372))
+          (IOPATH CP QN (::532) (::463))
+        )
+     )
+     (TIMINGCHECK
+        (SETUPHOLD (negedge D) (posedge CP) (::71) (::57))
+        (SETUPHOLD (posedge D) (posedge CP) (::75) (::6))
+     )
+  )
+)
