@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.std_logic_1164.ALL;
 
-entity itemGenerator is
+entity itemgenerator is
    port(clk             : in std_logic;
         reset           : in std_logic;
         item_set        : in std_logic;
@@ -20,5 +20,5 @@ entity itemGenerator is
         -- Only for test purpose:
         rng_out         : in std_logic;
         count_done      : in std_logic);
-end itemGenerator;
+end itemgenerator;
 
