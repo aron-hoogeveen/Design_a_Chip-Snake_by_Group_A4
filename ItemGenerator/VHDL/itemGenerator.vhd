@@ -18,6 +18,7 @@ entity itemgenerator is
 
         countfps_done   : in std_logic;
         countfps_start  : out std_logic;
+        countfps_fps    : in std_logic;
 
         -- Only for test purpose:
         rng_out         : in std_logic;
