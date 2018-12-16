@@ -11,11 +11,13 @@ entity itemgenerator is
         item_loc_clear  : in std_logic;
         item_loc        : out std_logic_vector(9 downto 0);
         item_ok         : in std_logic;
-        --item_head       : in std_logic_vector(9 downto 0);
 
         new_item_set    : out std_logic;
         new_item_clear  : in std_logic;
         new_item        : out std_logic_vector(11 downto 0);
+
+        countfps_done   : in std_logic;
+        countfps_start  : out std_logic;
 
         -- Only for test purpose:
         rng_out         : in std_logic;
