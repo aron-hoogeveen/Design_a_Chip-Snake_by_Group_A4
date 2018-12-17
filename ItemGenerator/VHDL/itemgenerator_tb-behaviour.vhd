@@ -47,9 +47,12 @@ test: itemgenerator port map (clk, reset, item_set, item_clear, req_item, item_l
 
    item_set <= '0' after 0 ns,
                '1' after 160 ns,
-               '0' after 240 ns;
+               '0' after 240 ns,
+               '1' after 2960 ns,
+               '0' after 3040 ns;
 
-   req_item <= '0' after 0 ns;
+   req_item <= '0' after 0 ns,
+               '1' after 2960 ns;
 
    item_loc_clear <= '0' after 0 ns,
                      '1' after 1360 ns,
@@ -65,9 +68,12 @@ test: itemgenerator port map (clk, reset, item_set, item_clear, req_item, item_l
                      '1' after 2800 ns,
                      '0' after 2880 ns;
 
-   countfps_fps <= '0' after 0 ns;
+   countfps_fps <= '1' after 0 ns,
+                   '0' after 80 ns when countfps_fps /= '0' else '1' after 80 ns;
 
-   rng_out <= '1' after 0 ns;
+   rng_out <= '1' after 0 ns,
+              '0' after 2960 ns,
+              '1' after 3320 ns;
 
    count_done <= '0' after 0 ns;
 end behaviour;
