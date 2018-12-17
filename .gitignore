@@ -16,6 +16,9 @@
 # Exclude all configuration files (just make sure all configuration files are saved with the combination 'cfg' in it)
 *cfg*.vhd
 
+*SYN*
+*PAR*
+
 # Exclude bitmap files
 *.bmp
 
@@ -27,6 +30,3 @@
 
 # Exlude simulation files
 *.sdf
-ItemGenerator/VHDL/itemgenerator_SYN\.vhd
-
-ItemGenerator/VHDL/itemgenerator_PAR\.vhd
