@@ -24,7 +24,7 @@ end component;
     signal counter_enable, counter_reset, register_enable, register_D: std_logic;
     --signal rng_out: std_logic;  -- only enable this signal when the rng is finished 
     signal register_Q: std_logic_vector(11 downto 0);
-    signal countfps_done, countfps_start, countfps_fps: std_logic;
+    signal countfps_done, countfps_start: std_logic;
 
 begin
     

@@ -16,8 +16,8 @@ entity itemgenerator is
         new_item_clear  : in std_logic;
         new_item        : out std_logic_vector(11 downto 0);
 
-        countfps_done   : in std_logic;
-        countfps_start  : out std_logic;
+        --countfps_done   : in std_logic;
+        --countfps_start  : out std_logic;
         countfps_fps    : in std_logic;
 
         -- Only for test purpose:
