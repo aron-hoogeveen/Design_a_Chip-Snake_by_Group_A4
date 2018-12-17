@@ -12,3 +12,18 @@
 **/vsim.wlf
 **/vsim_id
 *hidden*
+
+# Exclude all configuration files (just make sure all configuration files are saved with the combination 'cfg' in it)
+*cfg*.vhd
+
+# Exclude bitmap files
+*.bmp
+
+# Exclude makefiles
+*/makefile
+
+# Exlude the weird .nfs??????????????? file
+.nfs*
+
+# Exlude simulation files
+*.sdf
