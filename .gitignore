@@ -16,6 +16,9 @@
 # Exclude all configuration files (just make sure all configuration files are saved with the combination 'cfg' in it)
 *cfg*.vhd
 
+*SYN*
+*PAR*
+
 # Exclude bitmap files
 *.bmp
 
