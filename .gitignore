@@ -12,3 +12,16 @@
 **/vsim.wlf
 **/vsim_id
 *hidden*
+ItemGenerator/omg_so_cool_ig_schematic
+
+ItemGenerator/makefile
+
+ItemGenerator/ig_food_tb\.bmp
+
+*.sdf
+
+ItemGenerator/VHDL/itemgenerator_SYN\.vhd
+
+ItemGenerator/VHDL/itemgenerator_PAR\.vhd
+
+ItemGenerator/VHDL/itemgenerator_synthesised_cfg\.vhd

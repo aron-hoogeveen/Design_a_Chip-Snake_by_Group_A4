@@ -10,6 +10,10 @@ component counter4 is
     port (clk, reset, manual_reset, enable : in std_logic; z_out: out std_logic_vector(3 downto 0));
 end component;
 
+component counter_fps is
+    port (clk, reset, start, fps: in std_logic; z_out: out std_logic);
+end component;
+
 -- component rng is
 --    port (etc...)
 -- end component;
@@ -20,12 +24,13 @@ end component;
     signal counter_enable, counter_reset, register_enable, register_D: std_logic;
     --signal rng_out: std_logic;  -- only enable this signal when the rng is finished 
     signal register_Q: std_logic_vector(11 downto 0);
-    signal flagREE: std_logic;
+    signal countfps_done, countfps_start, countfps_fps: std_logic;
 
 begin
     
     count4: counter4 port map (clk=>clk, reset=>reset, manual_reset=>counter_reset, enable=>counter_enable, z_out=>counter_out);
     shift_reg: shift_register port map (clk=>clk, reset=>reset, enable=>register_enable, D=>register_D, Q=>register_Q);
+    fpscount: counter_fps port map (clk=>clk, reset=>reset, start=>countfps_start, fps=>countfps_fps, z_out=>countfps_done);
     -- IG_rng: rng port map (etc...);
 
     lbl1: process (clk)
@@ -39,7 +44,7 @@ begin
         end if;
     end process;
 
-    lbl2: process(state, item_set, req_item, item_loc_clear, item_ok, rng_out, new_item_clear, counter_out, register_Q)
+    lbl2: process(state, item_set, req_item, item_loc_clear, item_ok, rng_out, new_item_clear, counter_out, register_Q, countfps_done)
     begin
         case state is
             when IDLE =>
@@ -57,6 +62,8 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
+                countfps_start <= '0';
+                -----
 
 
                 -- Now check if snake wants us to generate a new item (and what
@@ -71,15 +78,18 @@ begin
                     -- into the shift register
                     new_state <= SHIFT_FOOD_ONE;
                 elsif (item_set = '1') and (req_item = '1') then
-                    -- Wait between 8 and 16 seconds somehow and then generate the pu item
+                    -- Wait for count_fps_done and then generate the pu item
+                    countfps_start <= '1';
 
                     -- Let Snake know that we proccessed the request
                     item_clear <= '1';
 
                     new_state <= IDLE;
-                elsif (item_set = '0') and (count_done = '1') then
-                    -- count_done is defined as the moment that enough time has passed to start generating the pu
-                    -- Generate the power-up
+                elsif (item_set = '0') and (countfps_done = '1') then
+                    -- Time has gone by, and now generate the pu
+                    -- If the fpscounter receives a start signal when it is in the finished state, it will work as a reset signal
+                    countfps_start <= '1';
+
                     new_state <= GEN_TYPE;
                 else
                     new_state <= IDLE;
@@ -99,6 +109,8 @@ begin
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
+                countfps_start <= '0';
                 -----
 
                 if (rng_out = '0') then
@@ -129,6 +141,8 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
+                countfps_start <= '0';
+                -----
 
                 register_enable <= '1';
                 register_D <= '1';
@@ -150,6 +164,8 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
+                countfps_start <= '0';
+                -----
 
                 register_enable <= '1';
                 register_D <= rng_out;
@@ -170,6 +186,8 @@ begin
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
+                countfps_start <= '0';
                 -----
 
 
@@ -194,6 +212,8 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
+                countfps_start <= '0';
+                -----
 
                 -- Shift the second bit of food ("00") into the SR 
                 register_enable <= '1';
@@ -215,6 +235,8 @@ begin
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
+                countfps_start <= '0';
                 -----
                 
 
@@ -251,6 +273,8 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
+                countfps_start <= '0';
+                -----
 
 
                 item_loc_set <= '1';
@@ -285,6 +309,8 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
+                countfps_start <= '0';
+                -----
 
                 register_enable <= '1';
                 register_D <= register_Q(0);
@@ -306,6 +332,8 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
+                countfps_start <= '0';
+                -----
 
                 register_enable <= '1';
                 register_D <= register_Q(0);
@@ -326,6 +354,8 @@ begin
                 counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
+                -----
+                countfps_start <= '0';
                 -----
 
 
