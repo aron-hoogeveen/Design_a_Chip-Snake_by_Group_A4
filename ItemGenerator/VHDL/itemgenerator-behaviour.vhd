@@ -239,14 +239,33 @@ begin
                 countfps_start <= '0';
                 -----
                 
+                ----- NOTE -----
+                -- Voor de y-as mag de maximale waarde van de locatie 24 zijn ("11000"), dus als bit 3 en 4 van y coordinaat allebij 1 zijn, moeten er drie 0'en toegevoegd worden aan het shift register.
+                -- 
+                -- 
 
-                -- Start the internal counter
+                -- Enable the internal counter
                 counter_enable <= '1';
                 counter_reset <= '0';
 
-                if (counter_out = "1010") then      -- "1010" equals decimal 10
+                -- Check if the x coordinate does not go out of bound
+                if (counter_out = "1001") then          -- The last bit will now be generated
+                    if (register_Q(11) = '1') then 
+                        counter_enable <= '1';
+                        register_enable <= '1';
+                        register_D <= '0';              -- This is for keeping the y coordinate in bound
+
+                        new_state <= GEN_LOC;
+                    else
+                        counter_enable <= '1';
+                        register_enable <= '1';
+                        register_D <= rng_out;
+
+                        new_state <= GEN_LOC;
+                    end if;
+                elsif (counter_out = "1010") then      -- "1010" equals decimal 10
                     counter_enable <= '0';
-                    -- Is it good habit to reset counter already? Or just leave it as it will be resetted just before another location generation anyway?
+                    
                     new_state <= CHECK_LOC;
                 else
                     -- Add new random bit to the shift register
