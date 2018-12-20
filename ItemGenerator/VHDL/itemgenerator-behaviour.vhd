@@ -14,15 +14,15 @@ component counter_fps is
     port (clk, reset, start, fps: in std_logic; z_out: out std_logic);
 end component;
 
--- component rng is
---    port (etc...)
--- end component;
+component rng is
+    port (clk, reset : in std_logic; z : out std_logic);
+end component;
 
     type itemGenerator_state is (IDLE, GEN_TYPE, GEN_TYPE_PU_ONE, GEN_TYPE_PU_TWO, SHIFT_FOOD_ONE, SHIFT_FOOD_TWO, GEN_LOC, SHIFT_REG_ONE, SHIFT_REG_TWO, CHECK_LOC, SEND_LOC);
     signal state, new_state: itemGenerator_state;
     signal counter_out, count_comp: std_logic_vector(3 downto 0);
     signal counter_enable, counter_reset, register_enable, register_D: std_logic;
-    --signal rng_out: std_logic;  -- only enable this signal when the rng is finished 
+    signal rng_out: std_logic;  -- only enable this signal when the rng is finished 
     signal register_Q: std_logic_vector(11 downto 0);
     signal countfps_done, countfps_start: std_logic;
 
@@ -31,7 +31,7 @@ begin
     count4: counter4 port map (clk=>clk, reset=>reset, manual_reset=>counter_reset, enable=>counter_enable, z_out=>counter_out);
     shift_reg: shift_register port map (clk=>clk, reset=>reset, enable=>register_enable, D=>register_D, Q=>register_Q);
     fpscount: counter_fps port map (clk=>clk, reset=>reset, start=>countfps_start, fps=>countfps_fps, z_out=>countfps_done);
-    -- IG_rng: rng port map (etc...);
+    IG_rng: rng port map (clk=>clk, reset=>reset, z=>rng_out);
 
     lbl1: process (clk)
     begin
