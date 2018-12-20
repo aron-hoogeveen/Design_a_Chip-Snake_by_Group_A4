@@ -4,7 +4,6 @@ use IEEE.numeric_std.ALL;
 
 architecture behaviour of h_cnt_control is
 -- declaration of the FSM' states
--- type h_control_state is (reset_state, display_state, porch_state, sync_state, counter_reset_state, enable_state);
 type h_control_state is (reset_state, display_state, porch_state, sync_state, counter_reset_state);
 
 signal state, next_state: h_control_state;
@@ -35,14 +34,12 @@ begin
 				h_sync	<= '0';
 				h_count_reset	<= '1';
 				h_video_on	<= '0';
-				enable	<= '0';
 					next_state <= display_state;
  
 			when display_state => 
 				h_sync	<= '1';
 				h_count_reset	<= '0';
 				h_video_on	<= '1';
-				enable	<= '0';
 				if(TH = HD) then
 					next_state <= porch_state;
 				else
@@ -53,8 +50,7 @@ begin
 				h_sync	<= '1';
 				h_count_reset	<= '0';
 				h_video_on	<= '0';
-				enable	<= '0';
-				if(TH = HBP) then
+							if(TH = HBP) then
 					next_state <= sync_state;
 				elsif(TH = HFP) then
 					next_state <= counter_reset_state; 
@@ -66,11 +62,8 @@ begin
 				h_sync	<= '0';
 				h_count_reset	<= '0';
 				h_video_on	<= '0';
-				enable	<= '0';
 				if(TH = HS) then
 					next_state <= porch_state;
---				elsif(TH = VEN) then	
---					next_state <= enable_state;
 				else
 					next_state <= sync_state;
 				end if;
@@ -79,21 +72,12 @@ begin
 				h_sync	<= '1';
 				h_count_reset	<= '1';
 				h_video_on	<= '0';
-				enable	<= '0';
 					next_state <= display_state;
-
---			when enable_state => 
---				h_sync	<= '0';
---				h_count_reset	<= '0';
---				h_video_on	<= '0';
---				enable	<= '1';
---					next_state <= sync_state;
 
 			when others =>				
 				h_sync	<= '0';
 				h_count_reset	<= '1';
 				h_video_on	<= '0';
-				enable	<= '0';
 					next_state <= display_state;
 		end case;
 	end process;

@@ -8,8 +8,7 @@ entity h_cnt_control is
         h_count       : in  std_logic_vector(8 downto 0);
         h_sync        : out std_logic;
         h_count_reset : out std_logic;
-        h_video_on    : out std_logic;
-        enable        : out std_logic);
+        h_video_on    : out std_logic);
 end h_cnt_control;
 -- clk		         : clock signal
 -- reset 		 			  : main reset
@@ -17,4 +16,4 @@ end h_cnt_control;
 -- h_sync        : horizontal synchronization signal
 -- h_count_reset :	resets the horizonal counter
 -- h_video_on    : switches the horizontal lines on/off
--- enable        : enables the vertical counter to be incremented by 1
+
