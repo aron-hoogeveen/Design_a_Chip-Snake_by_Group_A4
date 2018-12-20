@@ -16,7 +16,7 @@ end entity corner_calculation;
 
 architecture behaviour_corner_calc of corner_calculation is
 
-type corner_calculation_state is (start, calculate, request_next_list, send_tail, send_list, wait_next_list);
+type corner_calculation_state is (start, calculate, request_next_list, send_tail, send_list, wait_next_list, send_tail_2);
 signal state, next_state: corner_calculation_state;
 signal corner2_concatenate_x : std_logic_vector (9 downto 0);
 signal corner2_concatenate_y : std_logic_vector (9 downto 0); 
@@ -66,7 +66,9 @@ case state is
 
 	when calculate => 
 
-		if (snake_list (0) = '1') then
+		if (snake_list (0) = '1' and clear_flag_snake_out = '1') then
+			next_state <= send_tail_2;
+		elsif (snake_list (0) = '1') then
 			next_state <= send_tail;
 		elsif (clear_flag_snake_out = '1') then
 			next_state <= request_next_list;
@@ -108,7 +110,19 @@ case state is
 	
 	when send_tail =>
 
-		next_state <= calculate;
+		if (clear_flag_snake_out = '1') then
+			next_state <= request_next_list;
+		else
+			next_state <= calculate;
+		end if;
+		
+		flag_snake_out <= '0';
+		flag_next_list <= '0';
+		flag_tail <= '1';
+	
+	when send_tail_2 =>
+
+		next_state <= request_next_list;
 
 		flag_snake_out <= '0';
 		flag_next_list <= '0';
