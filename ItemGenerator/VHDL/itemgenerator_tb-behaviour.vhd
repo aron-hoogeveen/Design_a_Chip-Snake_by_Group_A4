@@ -19,7 +19,6 @@ architecture behaviour of itemgenerator_tb is
    
            countfps_fps    : in std_logic;
    
-           rng_out         : in std_logic;
            count_done      : in std_logic);
    end component;
    signal clk             : std_logic;
@@ -35,10 +34,9 @@ architecture behaviour of itemgenerator_tb is
    signal new_item_clear  : std_logic;
    signal new_item        : std_logic_vector(11 downto 0);
    signal countfps_fps    : std_logic;
-   signal rng_out         : std_logic;
    signal count_done      : std_logic;
 begin
-test: itemgenerator port map (clk, reset, item_set, item_clear, req_item, item_loc_set, item_loc_clear, item_loc, item_ok, new_item_set, new_item_clear, new_item, countfps_fps, rng_out, count_done);
+test: itemgenerator port map (clk, reset, item_set, item_clear, req_item, item_loc_set, item_loc_clear, item_loc, item_ok, new_item_set, new_item_clear, new_item, countfps_fps, count_done);
    clk <= '1' after 0 ns,
           '0' after 40 ns when clk /= '0' else '1' after 40 ns;
 
@@ -70,10 +68,6 @@ test: itemgenerator port map (clk, reset, item_set, item_clear, req_item, item_l
 
    countfps_fps <= '1' after 0 ns,
                    '0' after 80 ns when countfps_fps /= '0' else '1' after 80 ns;
-
-   rng_out <= '1' after 0 ns,
-              '0' after 2960 ns,
-              '1' after 3320 ns;
 
    count_done <= '0' after 0 ns;
 end behaviour;
