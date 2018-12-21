@@ -21,7 +21,7 @@ loc_y_H <= 20*unsigned(loc_yH);
 
 			when reset_state => 
 				snake	<= '0';
-				flag	<= '0';
+				clr_flag	<= '0';
 				if((unsigned(h_count) >= loc_x_L) and (unsigned(h_count) <= loc_x_H + 10) and (unsigned(v_count) >= loc_y_L) and (unsigned(v_count) <= loc_y_H + 20)) then
 					next_state <= write_snake;
 				else
@@ -31,7 +31,7 @@ loc_y_H <= 20*unsigned(loc_yH);
 
 			when write_snake => 
 				snake	<= '1';
-				flag	<= '0';
+				clr_flag	<= '0';
 
 				if(unsigned(h_count) >= loc_x_H + 10) then
 					if(unsigned(v_count) >= loc_y_H + 20) then
@@ -45,12 +45,12 @@ loc_y_H <= 20*unsigned(loc_yH);
 			
 			when flag_state =>
 				snake	<= '0';
-				flag	<= '1';		
+				clr_flag	<= '1';		
 				next_state <= reset_state;
 
 			when others =>
 				snake	<= '0';
-				flag	<= '0';
+				clr_flag	<= '0';
 				next_state <= reset_state;
 		end case;
 	end process;
