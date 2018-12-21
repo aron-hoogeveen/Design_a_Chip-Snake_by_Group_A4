@@ -3,7 +3,7 @@ use IEEE.std_logic_1164.all;
 
 entity snake_out IS
 port (  reset, clk 		: in std_logic;
-	flag_snake_out 		: in std_logic;
+	flag_coc 			: in std_logic;
 	corner1 			: in std_logic_vector (9 downto 0);
 	corner2 			: in std_logic_vector (9 downto 0);
 	clr_flag_g 			: in std_logic;
@@ -19,7 +19,7 @@ end entity snake_out;
 
 architecture behaviour_snake_out of snake_out is
 
-type snake_out_state is (idle, compare_x, create_ybounds, create_xbounds, set_flags, wait_chc, wait_g, clear);
+type snake_out_state is (clk, reset, idle, compare_x, create_ybounds, create_xbounds, set_flags, wait_chc, wait_g, clear);
 signal state, next_state: snake_out_state;
 
 begin
@@ -50,7 +50,7 @@ case state is
 		flag_g <= '0';
 		flag_chc <= '0';
 		
-		if flag_chc = '1' then
+		if flag_coc = '1' then
 			next_state <= compare_x;
 		else
 			next_state <= idle;
