@@ -11,4 +11,3 @@ entity color_gen is
         green    : out std_logic;
         blue     : out std_logic);
 end color_gen;
-
