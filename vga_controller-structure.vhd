@@ -80,9 +80,12 @@ v_cnt: v_counter
 				reset		 => v_count_reset,
 				enable	 => h_count_reset,
 				v_count	=> v_count_inter);
-
+	
+	h_count	<= h_count_inter;
+	v_count	<= v_count_inter;
 	-- generate the video_on signal whose value is '1' during display time
 	video_on_sig <= h_video_on and v_video_on;
+
 	video_on <= video_on_sig;
 	pulse_60hz <= v_count_reset;
 end structure;

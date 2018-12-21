@@ -14,14 +14,14 @@ constant HD  : unsigned(8 downto 0):= to_unsigned(318, 9);
 constant HBP : unsigned(8 downto 0):= to_unsigned(342, 9); 
 constant HS  :	unsigned(8 downto 0):= to_unsigned(390, 9); 
 constant HFP : unsigned(8 downto 0):= to_unsigned(398, 9); 
-constant VEN : unsigned(8 downto 0):= to_unsigned(362, 9); 
+--constant VEN : unsigned(8 downto 0):= to_unsigned(362, 9); 
 
 -- HD : dispaly time
 -- HBP: horizontal back porch
 -- HS : horizontal sync pulse
 -- HBP: horizontal back porch
--- VEN: enables the vertical counter to be incremented by 1
---		  20 clock cyles after one horizontal line is completed
+
+
 begin
 
    TH <= unsigned(h_count);

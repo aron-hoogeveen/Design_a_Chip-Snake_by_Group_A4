@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.std_logic_1164.ALL;
+use IEEE.numeric_std.ALL;
 
 architecture behaviour of vga_controller_tb is
    component vga_controller
@@ -26,9 +27,7 @@ test: vga_controller port map (clk, reset, h_sync, v_sync, h_count, v_count,vide
 	clk <=	'1' after 0 ns,
 			 '0' after 40 ns when clk /= '0' else '1' after 40 ns;
    reset <= '1' after 0 ns,
-				'0' after 160 ns,
-				'1' after 82080 ns,
-				'0' after 82240 ns;
+				'0' after 160 ns;
 
 end behaviour;
 

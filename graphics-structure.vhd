@@ -26,10 +26,11 @@ architecture structure of graphics is
         		 item_x    : in  std_logic_vector(4 downto 0);
         		 item_y    : in  std_logic_vector(4 downto 0);
         		 video_on  : in  std_logic;
+			  draw_flag	:	in std_logic;
         		 red       : out std_logic;
         		 green     : out std_logic;
         		 blue      : out std_logic;
-		  	  flag				: out	std_logic);
+		  	  clr_flag		: out	std_logic);
 	end component;
 	
 	signal h_count    : std_logic_vector(8 downto 0);
@@ -59,9 +60,10 @@ image: image_gen
         		  item_x    => item_x,
         		  item_y    => item_y, 
         		  video_on  => video_on,
+				draw_flag => draw_flag,
         		  red       => red,
         		  green     => green,
         		  blue      => blue,
-		  	   flag				 => flag);
+		  	   clr_flag		=> clr_flag);
 end structure;
 
