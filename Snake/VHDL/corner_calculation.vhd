@@ -5,6 +5,7 @@ entity corner_calculation IS
 port (  reset, clk : in std_logic;
 	clear_flag_snake_list : in std_logic;
 	clear_flag_snake_out : in std_logic;
+	flg_ok_tail : in std_logic;
 	snake_list : in std_logic_vector (16 downto 0);
 	corner1 : out std_logic_vector (9 downto 0);
 	corner2 : out std_logic_vector (9 downto 0);
@@ -16,7 +17,7 @@ end entity corner_calculation;
 
 architecture behaviour_corner_calc of corner_calculation is
 
-type corner_calculation_state is (start, calculate, request_next_list, send_tail, send_list, wait_next_list, send_tail_2);
+type corner_calculation_state is (start, calculate, request_next_list, send_tail, send_list, send_tail_2, send_tail_3);
 signal state, next_state: corner_calculation_state;
 signal corner2_concatenate_x : std_logic_vector (9 downto 0);
 signal corner2_concatenate_y : std_logic_vector (9 downto 0); 
@@ -82,23 +83,15 @@ case state is
 	
 	when request_next_list =>
 
-		next_state <= wait_next_list;
+		if (clear_flag_snake_list = '1') then		
+			next_state <= send_list;
+		else
+			next_state <= request_next_list;
+		end if;
 		
 		flag_snake_out <= '0';
 		flag_next_list <= '1';
 		flag_tail <= '0';	
-
-	when wait_next_list =>
-		
-		if (clear_flag_snake_list = '1') then
-			next_state <= send_list;
-		else
-			next_state <= wait_next_list;
-		end if;
-	
-		flag_next_list <= '0';
-		flag_tail <= '0';
-		flag_snake_out <= '0';
 
 	when send_list =>
 		
@@ -110,10 +103,14 @@ case state is
 	
 	when send_tail =>
 
-		if (clear_flag_snake_out = '1') then
+		if (clear_flag_snake_out = '1' and flg_ok_tail = '1') then
 			next_state <= request_next_list;
-		else
+		elsif (flg_ok_tail = '1') then
 			next_state <= calculate;
+		elsif (clear_flag_snake_out = '1') then
+			next_state <= send_tail_3;
+		else
+			next_state <= send_tail;
 		end if;
 		
 		flag_snake_out <= '0';
@@ -122,8 +119,24 @@ case state is
 	
 	when send_tail_2 =>
 
-		next_state <= request_next_list;
+		if (flg_ok_tail = '1') then
+			next_state <= request_next_list;
+		else
+			next_state <= send_tail_2;
+		end if; 
 
+		flag_snake_out <= '0';
+		flag_next_list <= '0';
+		flag_tail <= '1';
+	
+	when send_tail_3 =>
+
+		if (flg_ok_tail = '1') then
+			next_state <= request_next_list;
+		else
+			next_state <= send_tail_3;
+		end if;
+		
 		flag_snake_out <= '0';
 		flag_next_list <= '0';
 		flag_tail <= '1';
