@@ -13,9 +13,10 @@ entity image_gen is
         item_x    : in  std_logic_vector(4 downto 0);
         item_y    : in  std_logic_vector(4 downto 0);
         video_on  : in  std_logic;
+		  draw_flag : in std_logic;
         red       : out std_logic;
         green     : out std_logic;
         blue      : out std_logic;
-		  flag				: out	std_logic);
+		  clr_flag		: out	std_logic);
 end image_gen;
 
