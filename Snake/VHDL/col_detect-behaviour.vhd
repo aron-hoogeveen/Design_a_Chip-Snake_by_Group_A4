@@ -121,28 +121,28 @@ begin
                 --
                 st_req_item_set <= '0';
                 st_req_item_no <= '0';
-                ----
+                ---- 
 
-
-                -- check for a collision with the second item
+                -- Check for a collision with the second item 
                 st_req_item_set <= '1';
-                st_req_item_no <= '1'; -- second item
 
                 if (st_req_item_clear = '1') and (st_req_item_exists = '1') then
-                    ---- collision
-                    --st_req_item_set <= '0';
-                    --
-                    --ig_item_loc_clear <= '1';
-                    --ig_item_ok <= '0';
-                    --
-                    --new_state <= IDLE;
-                    -- TEMPORARY
-                    new_state <= IDLE;
-                    
-                elsif (st_req_item_clear = '1') and (st_req_item_exists = '0') then
-                    -- no collision (yet)
                     st_req_item_set <= '0';
+                    
+                    if (st_item_loc = ig_item_loc) then
+                        -- This location is already occupied
+                        ig_item_loc_clear <= '1';
+                        ig_item_ok <= '0';
 
+                        new_state <= IDLE;
+                     else
+                        -- new_item passed this check
+                        new_state <= COL_SNAKE;
+                     end if;
+                elsif (st_req_item_clear = '1') and (st_req_item_exists = '0') then
+                    st_req_item_set <= '0';
+                    
+                    -- skip this item because it does not exist (what is actually weird, as there should always be one food item in the field)
                     new_state <= COL_SNAKE;
                 else 
                     new_state <= COL_ITEM_TWO;

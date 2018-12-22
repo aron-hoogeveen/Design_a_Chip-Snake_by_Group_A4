@@ -40,8 +40,6 @@ test: col_detect port map (clk, reset, ig_item_loc, ig_item_loc_set, ig_item_loc
    
    ig_item_loc <= "0000010101" after 0 ns, -- 160 ns
                   "1010100000" after 400 ns,
-                  --"1111110101" after 640 ns,
-                  --"1010111000" after 1060 ns;
                   "1010110101" after 640 ns;
 
    ig_item_loc_set <= '0' after 0 ns,
@@ -53,12 +51,18 @@ test: col_detect port map (clk, reset, ig_item_loc, ig_item_loc_set, ig_item_loc
                       '0' after 800 ns;
    
    st_item_loc <= "0000000000" after 0 ns,
-                  "1010110101" after 1200 ns;
+                  "1010110101" after 880 ns;
 
    st_req_item_clear <= '0' after 0 ns,
+                        '1' after 800 ns,
+                        '0' after 880 ns,
                         '1' after 960 ns,
                         '0' after 1040 ns;
    
-   st_req_item_exists <= '0' after 0 ns;
+   st_req_item_exists <= '0' after 0 ns,
+                         '1' after 800 ns,
+                         '0' after 880 ns,
+                         '1' after 960 ns,
+                         '0' after 1040 ns;
 end behaviour;
 
