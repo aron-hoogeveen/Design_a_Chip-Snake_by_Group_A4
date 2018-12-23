@@ -30,3 +30,6 @@
 
 # Exlude simulation files
 *.sdf
+
+# Exclude backup files
+*.bak

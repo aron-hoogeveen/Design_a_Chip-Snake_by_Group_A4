@@ -14,7 +14,14 @@ entity col_detect is
         st_req_item_clear   : in std_logic;
         st_req_item_exists  : in std_logic;
         st_req_item_set     : out std_logic;
-        st_req_item_no      : out std_logic
+        st_req_item_no      : out std_logic;
+
+        x_range             : in std_logic_vector(9 downto 0);
+        y_range             : in std_logic_vector(9 downto 0);
+        tail                : in std_logic;
+        so_range_set        : in std_logic;
+        so_range_clear      : out std_logic;
+        so_reset            : out std_logic
     );
         
 end col_detect;
