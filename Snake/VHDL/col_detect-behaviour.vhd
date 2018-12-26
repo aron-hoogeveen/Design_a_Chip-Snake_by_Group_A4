@@ -169,17 +169,29 @@ begin
 
                             elsif (st_req_item_type = "01") then
                                 -- SEND THE CORRESPONDING EFFECT TO THE CORRESPONDIG MODULE
+                                
+                                --------------------------------
+                                -- REPLACE ME WITH FINAL CODE --
+                                --------------------------------
 
                                 new_state <= IDLE;
 
                             elsif (st_req_item_type = "10") then
                                 -- SEND THE CORRESPONDIG BLAH BLAH BLAH
 
+                                --------------------------------
+                                -- REPLACE ME WITH FINAL CODE --
+                                --------------------------------
+
                                 new_state <= IDLE;
 
                             elsif (st_req_item_type = "11") then
                                 -- Do 
 
+                                --------------------------------
+                                -- REPLACE ME WITH FINAL CODE --
+                                --------------------------------
+                                
                                 new_state <= IDLE;
                             else
                                 -- LOLWUT I DO NOT KNOW WHAT TO DO REEEEEEEEEEEEEEEE
@@ -254,17 +266,29 @@ begin
 
                             elsif (st_req_item_type = "01") then
                                 -- SEND THE CORRESPONDING EFFECT TO THE CORRESPONDIG MODULE
+                                
+                                --------------------------------
+                                -- REPLACE ME WITH FINAL CODE --
+                                --------------------------------
 
                                 new_state <= IDLE;
 
                             elsif (st_req_item_type = "10") then
                                 -- SEND THE CORRESPONDIG BLAH BLAH BLAH
 
+                                --------------------------------
+                                -- REPLACE ME WITH FINAL CODE --
+                                --------------------------------
+
                                 new_state <= IDLE;
 
                             elsif (st_req_item_type = "11") then
                                 -- Do 
 
+                                --------------------------------
+                                -- REPLACE ME WITH FINAL CODE --
+                                --------------------------------
+                                
                                 new_state <= IDLE;
                             else
                                 -- LOLWUT I DO NOT KNOW WHAT TO DO REEEEEEEEEEEEEEEE
