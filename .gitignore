@@ -36,3 +36,5 @@
 
 # Exclude swp files
 *.swp
+
+makefile
