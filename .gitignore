@@ -33,3 +33,6 @@
 
 # Exclude backup files
 *.bak
+
+# Exclude swap(?) files (created by 'nano')
+*.swp

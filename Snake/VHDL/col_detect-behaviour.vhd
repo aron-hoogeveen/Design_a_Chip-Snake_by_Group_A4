@@ -186,7 +186,79 @@ begin
                 if (so_range_set = '1') then
                     if (tail = '1') then
                         -- This is the last check we will perform. If it succeeds the generation was succesfull
-                        
+                        -- Check if the line is horizontal or vertical
+                        if (x_range(9 downto 5) = x_range(4 downto 0)) then
+                            -- Vertical line
+                            if (ig_item_loc(4 downto 0) = x_range(4 downto 0)) then
+                                -- Possible collision
+                                if (ig_item_loc(9 downto 5) < y_range(4 downto 0)) or (ig_item_loc(9 downto 5) > y_range(9 downto 5)) then
+                                    -- No collision,  done.
+
+                                    so_range_clear <= '1'; -- request new part of snake
+
+                                    -- Item Generator should still be waiting for our answer, so we only have to signal the result during this one clock period
+                                    ig_item_loc_clear <= '1';
+                                    ig_item_ok <= '1';
+                                    
+                                    new_state <= IDLE;
+                                    
+                                else
+                                    -- Collision
+                                    ig_item_loc_clear <= '1';
+                                    ig_item_ok <= '0';
+
+                                    -- NEED TO DECIDE WHICH SINGAL WE'LL USE BETWEEN COL_DET AND SO
+                                    so_range_clear <= '1';
+                                    so_reset <= '1'; -- EVEN KIJKEN HOE WE DIT GAAN IMPLEMENTEREN
+
+                                    new_state <= IDLE;
+                                end if;
+                            else
+                                -- No collision, done.
+
+                                so_range_clear <= '1'; -- request new part of snake
+
+                                ig_item_loc_clear <= '1';
+                                ig_item_ok <= '1';
+
+                                new_state <= IDLE;
+                        end if;
+                        else
+                            -- Now we assume that y_range(start) = y_range(end). If somewhere this is fucked up, this will result in unwanted behaviour
+                            -- Horizontal line
+                            if (ig_item_loc(9 downto 5) = y_range(4 downto 0)) then
+                                -- Possible collision
+                                if (ig_item_loc(4 downto 0) < x_range(4 downto 0)) or (ig_item_loc(4 downto 0) > x_range(9 downto 0)) then
+                                    -- No collision, done.
+
+                                    so_range_clear <= '1'; -- request new part of snake
+
+                                    -- Item Generator should still be waiting for our answer, so we only have to signal the result during this one clock period
+                                    ig_item_loc_clear <= '1';
+                                    ig_item_ok <= '1';
+                                    
+                                    new_state <= IDLE;
+                                else 
+                                    -- Collision
+                                    ig_item_loc_clear <= '1';
+                                    ig_item_ok <= '0';
+                                    
+                                    so_reset <= '1';
+                                    
+                                    new_state <= IDLE;
+                                end if;
+                            else
+                                -- No collision, done.
+                                -- Check the next line of the snake
+
+                                so_range_clear <= '1'; -- request new part of snake
+
+                                ig_item_loc_clear <= '1';
+                                ig_item_ok <= '1';
+
+                                new_state <= IDLE;
+                            end if; 
+                        end if;
                     else
                         -- Check if the line is horizontal or vertical
                         if (x_range(9 downto 5) = x_range(4 downto 0)) then

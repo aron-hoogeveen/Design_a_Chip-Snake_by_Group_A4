@@ -93,9 +93,13 @@ test: col_detect port map (clk, reset, ig_item_loc, ig_item_loc_set, ig_item_loc
 
    y_range <= "0000100001" after 0 ns;
 
-   tail <= '0' after 0 ns;
+   tail <= '0' after 0 ns,
+           '1' after 1760 ns,
+           '0' after 1920 ns;
    
    so_range_set <= '0' after 0 ns,
-                   '1' after 160 ns;
+                   '1' after 160 ns,
+                   '0' after 1680 ns,
+                   '1' after 1840 ns;
 end behaviour;
 
