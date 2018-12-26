@@ -13,6 +13,7 @@ entity col_detect is
         st_item_loc         : in std_logic_vector(9 downto 0);
         st_req_item_clear   : in std_logic;
         st_req_item_exists  : in std_logic;
+        st_req_item_type    : in std_logic_vector(1 downto 0);
         st_req_item_set     : out std_logic;
         st_req_item_no      : out std_logic;
 
@@ -26,7 +27,9 @@ entity col_detect is
         br_new_head         : in std_logic_vector(9 downto 0);
         br_new_head_set     : in std_logic;
         br_new_head_clear   : out std_logic;
-        br_new_head_ok      : out std_logic
+        br_new_head_ok      : out std_logic;
+
+        food_collision      : out std_logic
     );
         
 end col_detect;

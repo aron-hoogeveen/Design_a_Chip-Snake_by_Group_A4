@@ -1,3 +1,14 @@
+----------------------------------------------------------------------
+-- File:        col_detect-behaviour.vhd
+-- Author:      Aron Hoogeveen
+-- Project:     Design a Chip - EPO3
+-- Description: Wow hier kan even een coole samenvatting van alle
+--              signalen enzo gegeven worden. Dan is het makkelijker
+--              voor anderen om te begrijpen waar alle signalen voor
+--              zijn.
+-----------------------------------------------------------------------
+
+
 library IEEE;
 use IEEE.std_logic_1164.ALL;
 use IEEE.std_logic_arith.ALL;
@@ -20,7 +31,7 @@ begin
         end if;
     end process;
 
-    lbl2: process (state, ig_item_loc_set, ig_item_loc, st_req_item_clear, st_req_item_exists, st_item_loc, x_range, y_range, so_range_set, tail, br_new_head_set, br_new_head)
+    lbl2: process (state, ig_item_loc_set, ig_item_loc, st_req_item_clear, st_req_item_exists, st_req_item_type, st_item_loc, x_range, y_range, so_range_set, tail, br_new_head_set, br_new_head)
     begin
         case state is
             when IDLE =>
@@ -122,6 +133,8 @@ begin
                 --
                 br_new_head_clear <= '0';
                 br_new_head_ok <= '0';
+                --
+                food_collision <= '0';
                 ----
 
 
@@ -145,11 +158,33 @@ begin
                     elsif (br_new_head_set = '1') then
                         -- NEW HEAD
                         if (st_item_loc = br_new_head) then
-                            -- This location is already occupied
-                            br_new_head_clear <= '1';
-                            br_new_head_ok <= '0';
+                            if (st_req_item_type = "00") then
+                                -- FOOD COLLISION WHICH IS GOOD
+                                br_new_head_clear <= '1';
+                                br_new_head_ok <= '1';
 
-                            new_state <= IDLE;
+                                food_collision <= '1'; -- Does only need to be high for one clock period
+
+                                new_state <= IDLE;
+
+                            elsif (st_req_item_type = "01") then
+                                -- SEND THE CORRESPONDING EFFECT TO THE CORRESPONDIG MODULE
+
+                                new_state <= IDLE;
+
+                            elsif (st_req_item_type = "10") then
+                                -- SEND THE CORRESPONDIG BLAH BLAH BLAH
+
+                                new_state <= IDLE;
+
+                            elsif (st_req_item_type = "11") then
+                                -- Do 
+
+                                new_state <= IDLE;
+                            else
+                                -- LOLWUT I DO NOT KNOW WHAT TO DO REEEEEEEEEEEEEEEE
+                                new_state <= IDLE;
+                            end if;
                         else
                             -- new_head passed this check
                             new_state <= COL_ITEM_TWO;
@@ -208,16 +243,38 @@ begin
                     elsif (br_new_head_set = '1') then
                         -- NEW HEAD
                         if (st_item_loc = br_new_head) then
-                            -- This location is already occupied
-                            br_new_head_clear <= '1';
-                            br_new_head_ok <= '0';
+                            if (st_req_item_type = "00") then
+                                -- FOOD COLLISION WHICH IS GOOD
+                                br_new_head_clear <= '1';
+                                br_new_head_ok <= '1';
 
-                            new_state <= IDLE;
+                                food_collision <= '1'; -- Does only need to be high for one clock period
+
+                                new_state <= IDLE;
+
+                            elsif (st_req_item_type = "01") then
+                                -- SEND THE CORRESPONDING EFFECT TO THE CORRESPONDIG MODULE
+
+                                new_state <= IDLE;
+
+                            elsif (st_req_item_type = "10") then
+                                -- SEND THE CORRESPONDIG BLAH BLAH BLAH
+
+                                new_state <= IDLE;
+
+                            elsif (st_req_item_type = "11") then
+                                -- Do 
+
+                                new_state <= IDLE;
+                            else
+                                -- LOLWUT I DO NOT KNOW WHAT TO DO REEEEEEEEEEEEEEEE
+                                new_state <= IDLE;
+                            end if;
                         else
                             -- new_head passed this check
                             new_state <= COL_SNAKE;
                         end if;
-                    else 
+                    else
                         -- ehm, we should not be here. We can either:
                         --  1. panick and go back to IDLE
                         --  2. chill back and relax and stay in COL_ITEM_ONE
@@ -264,137 +321,284 @@ begin
                         -- Check if the line is horizontal or vertical
                         if (x_range(9 downto 5) = x_range(4 downto 0)) then
                             -- Vertical line
-                            if (ig_item_loc(4 downto 0) = x_range(4 downto 0)) then
-                                -- Possible collision
-                                if (ig_item_loc(9 downto 5) < y_range(4 downto 0)) or (ig_item_loc(9 downto 5) > y_range(9 downto 5)) then
-                                    -- No collision,  done.
+                            if (ig_item_loc_set = '1') then
+                                if (ig_item_loc(4 downto 0) = x_range(4 downto 0)) then
+                                    -- Possible collision
+                                    if (ig_item_loc(9 downto 5) < y_range(4 downto 0)) or (ig_item_loc(9 downto 5) > y_range(9 downto 5)) then
+                                        -- No collision,  done.
 
-                                    so_range_clear <= '1'; -- request new part of snake
+                                        so_range_clear <= '1'; -- request new part of snake
 
-                                    -- Item Generator should still be waiting for our answer, so we only have to signal the result during this one clock period
-                                    ig_item_loc_clear <= '1';
-                                    ig_item_ok <= '1';
-                                    
-                                    new_state <= IDLE;
-                                    
+                                        -- Item Generator should still be waiting for our answer, so we only have to signal the result during this one clock period
+                                        ig_item_loc_clear <= '1';
+                                        ig_item_ok <= '1';
+                                        
+                                        new_state <= IDLE;
+                                        
+                                    else
+                                        -- Collision
+                                        ig_item_loc_clear <= '1';
+                                        ig_item_ok <= '0';
+
+                                        -- NEED TO DECIDE WHICH SINGAL WE'LL USE BETWEEN COL_DET AND SO
+                                        so_range_clear <= '1';
+                                        so_reset <= '1'; -- EVEN KIJKEN HOE WE DIT GAAN IMPLEMENTEREN
+
+                                        new_state <= IDLE;
+                                    end if;
                                 else
-                                    -- Collision
-                                    ig_item_loc_clear <= '1';
-                                    ig_item_ok <= '0';
-
-                                    -- NEED TO DECIDE WHICH SINGAL WE'LL USE BETWEEN COL_DET AND SO
-                                    so_range_clear <= '1';
-                                    so_reset <= '1'; -- EVEN KIJKEN HOE WE DIT GAAN IMPLEMENTEREN
-
-                                    new_state <= IDLE;
-                                end if;
-                            else
-                                -- No collision, done.
-
-                                so_range_clear <= '1'; -- request new part of snake
-
-                                ig_item_loc_clear <= '1';
-                                ig_item_ok <= '1';
-
-                                new_state <= IDLE;
-                        end if;
-                        else
-                            -- Now we assume that y_range(start) = y_range(end). If somewhere this is fucked up, this will result in unwanted behaviour
-                            -- Horizontal line
-                            if (ig_item_loc(9 downto 5) = y_range(4 downto 0)) then
-                                -- Possible collision
-                                if (ig_item_loc(4 downto 0) < x_range(4 downto 0)) or (ig_item_loc(4 downto 0) > x_range(9 downto 0)) then
                                     -- No collision, done.
 
                                     so_range_clear <= '1'; -- request new part of snake
 
-                                    -- Item Generator should still be waiting for our answer, so we only have to signal the result during this one clock period
                                     ig_item_loc_clear <= '1';
                                     ig_item_ok <= '1';
-                                    
-                                    new_state <= IDLE;
-                                else 
-                                    -- Collision
-                                    ig_item_loc_clear <= '1';
-                                    ig_item_ok <= '0';
-                                    
-                                    so_reset <= '1';
-                                    
+
                                     new_state <= IDLE;
                                 end if;
-                            else
-                                -- No collision, done.
-                                -- Check the next line of the snake
+                            elsif (br_new_head_set = '1') then
+                                -- NEW HEAD
+                                if (br_new_head(4 downto 0) = x_range(4 downto 0)) then
+                                    -- Possible collision
+                                    if (br_new_head(9 downto 5) < y_range(4 downto 0)) or (br_new_head(9 downto 5) > y_range(9 downto 5)) then
+                                        -- No collision,  done.
 
-                                so_range_clear <= '1'; -- request new part of snake
+                                        so_range_clear <= '1'; -- request new part of snake
 
-                                ig_item_loc_clear <= '1';
-                                ig_item_ok <= '1';
+                                        -- Item Generator should still be waiting for our answer, so we only have to signal the result during this one clock period
+                                        br_new_head_clear <= '1';
+                                        br_new_head_ok <= '1';
+                                        
+                                        new_state <= IDLE;
+                                        
+                                    else
+                                        -- Collision
+                                        br_new_head_clear <= '1';
+                                        br_new_head_ok <= '0';
 
-                                new_state <= IDLE;
-                            end if; 
-                        end if;
-                    else
-                        -- Check if the line is horizontal or vertical
-                        if (x_range(9 downto 5) = x_range(4 downto 0)) then
-                            -- Vertical line
-                            if (ig_item_loc(4 downto 0) = x_range(4 downto 0)) then
-                                -- Possible collision
-                                if (ig_item_loc(9 downto 5) < y_range(4 downto 0)) or (ig_item_loc(9 downto 5) > y_range(9 downto 5)) then
-                                    -- No collision
-                                    -- Check the next line of the snake
+                                        -- NEED TO DECIDE WHICH SINGAL WE'LL USE BETWEEN COL_DET AND SO
+                                        so_range_clear <= '1';
+                                        so_reset <= '1'; -- EVEN KIJKEN HOE WE DIT GAAN IMPLEMENTEREN
+
+                                        new_state <= IDLE;
+                                    end if;
+                                else
+                                    -- No collision, done.
 
                                     so_range_clear <= '1'; -- request new part of snake
 
-                                    new_state <= COL_SNAKE;
-                                    
-                                else
-                                    -- Collision
-                                    ig_item_loc_clear <= '1';
-                                    ig_item_ok <= '0';
-
-                                    
-                                    so_reset <= '1'; -- EVEN KIJKEN HOE WE DIT GAAN IMPLEMENTEREN
+                                    br_new_head_clear <= '1';
+                                    br_new_head_ok <= '1';
 
                                     new_state <= IDLE;
                                 end if;
                             else
-                                -- No collision
-                                -- Check the next line of the snake
+                                -- panick
 
-                                so_range_clear <= '1'; -- request new part of snake
-
-                                new_state <= COL_SNAKE;
-                        end if;
+                                new_state <= IDLE;
+                            end if;
                         else
                             -- Now we assume that y_range(start) = y_range(end). If somewhere this is fucked up, this will result in unwanted behaviour
                             -- Horizontal line
-                            if (ig_item_loc(9 downto 5) = y_range(4 downto 0)) then
-                                -- Possible collision
-                                if (ig_item_loc(4 downto 0) < x_range(4 downto 0)) or (ig_item_loc(4 downto 0) > x_range(9 downto 0)) then
+                            if (ig_item_loc_set = '1') then
+                                if (ig_item_loc(9 downto 5) = y_range(4 downto 0)) then
+                                    -- Possible collision
+                                    if (ig_item_loc(4 downto 0) < x_range(4 downto 0)) or (ig_item_loc(4 downto 0) > x_range(9 downto 0)) then
+                                        -- No collision, done.
+
+                                        so_range_clear <= '1'; -- request new part of snake
+
+                                        -- Item Generator should still be waiting for our answer, so we only have to signal the result during this one clock period
+                                        ig_item_loc_clear <= '1';
+                                        ig_item_ok <= '1';
+                                        
+                                        new_state <= IDLE;
+                                    else 
+                                        -- Collision
+                                        ig_item_loc_clear <= '1';
+                                        ig_item_ok <= '0';
+                                        
+                                        so_reset <= '1';
+                                        
+                                        new_state <= IDLE;
+                                    end if;
+                                else
+                                    -- No collision, done.
+                                    -- Check the next line of the snake
+
+                                    so_range_clear <= '1'; -- request new part of snake
+
+                                    ig_item_loc_clear <= '1';
+                                    ig_item_ok <= '1';
+
+                                    new_state <= IDLE;
+                                end if; 
+                            elsif (br_new_head_set = '1') then
+                                -- NEW HEAD
+                                if (br_new_head(9 downto 5) = y_range(4 downto 0)) then
+                                    -- Possible collision
+                                    if (br_new_head(4 downto 0) < x_range(4 downto 0)) or (br_new_head(4 downto 0) > x_range(9 downto 0)) then
+                                        -- No collision, done.
+
+                                        so_range_clear <= '1'; -- request new part of snake
+
+                                        -- Item Generator should still be waiting for our answer, so we only have to signal the result during this one clock period
+                                        br_new_head_clear <= '1';
+                                        br_new_head_ok <= '1';
+                                        
+                                        new_state <= IDLE;
+                                    else 
+                                        -- Collision
+                                        br_new_head_clear <= '1';
+                                        br_new_head_ok <= '0';
+                                        
+                                        so_reset <= '1';
+                                        
+                                        new_state <= IDLE;
+                                    end if;
+                                else
+                                    -- No collision, done.
+                                    -- Check the next line of the snake
+
+                                    so_range_clear <= '1'; -- request new part of snake
+
+                                    br_new_head_clear <= '1';
+                                    br_new_head_ok <= '1';
+
+                                    new_state <= IDLE;
+                                end if; 
+                            else
+                                -- PANICK
+                                new_state <= IDLE;
+                            end if;
+                        end if;
+                    else
+                                                -- Check if the line is horizontal or vertical
+                        if (x_range(9 downto 5) = x_range(4 downto 0)) then
+                            -- Vertical line
+                            if (ig_item_loc_set = '1') then
+                                if (ig_item_loc(4 downto 0) = x_range(4 downto 0)) then
+                                    -- Possible collision
+                                    if (ig_item_loc(9 downto 5) < y_range(4 downto 0)) or (ig_item_loc(9 downto 5) > y_range(9 downto 5)) then
+                                        -- No collision
+                                        -- Check the next line of the snake
+
+                                        so_range_clear <= '1'; -- request new part of snake
+
+                                        new_state <= COL_SNAKE;
+                                        
+                                    else
+                                        -- Collision
+                                        ig_item_loc_clear <= '1';
+                                        ig_item_ok <= '0';
+
+                                        
+                                        so_reset <= '1'; -- EVEN KIJKEN HOE WE DIT GAAN IMPLEMENTEREN
+
+                                        new_state <= IDLE;
+                                    end if;
+                                else
                                     -- No collision
                                     -- Check the next line of the snake
 
                                     so_range_clear <= '1'; -- request new part of snake
 
                                     new_state <= COL_SNAKE;
-                                else 
-                                    -- Collision
-                                    ig_item_loc_clear <= '1';
-                                    ig_item_ok <= '0';
-                                    
-                                    so_reset <= '1';
-                                    
-                                    new_state <= IDLE;
+                                end if;
+                            elsif (br_new_head_set = '1') then
+                                if (br_new_head(4 downto 0) = x_range(4 downto 0)) then
+                                    -- Possible collision
+                                    if (br_new_head(9 downto 5) < y_range(4 downto 0)) or (br_new_head(9 downto 5) > y_range(9 downto 5)) then
+                                        -- No collision
+                                        -- Check the next line of the snake
+
+                                        so_range_clear <= '1'; -- request new part of snake
+
+                                        new_state <= COL_SNAKE;
+                                        
+                                    else
+                                        -- Collision
+                                        br_new_head_clear <= '1';
+                                        br_new_head_ok <= '0';
+
+                                        
+                                        so_reset <= '1'; -- EVEN KIJKEN HOE WE DIT GAAN IMPLEMENTEREN
+
+                                        new_state <= IDLE;
+                                    end if;
+                                else
+                                    -- No collision
+                                    -- Check the next line of the snake
+
+                                    so_range_clear <= '1'; -- request new part of snake
+
+                                    new_state <= COL_SNAKE;
                                 end if;
                             else
-                                -- No collision
-                                -- Check the next line of the snake
+                                -- PANICK
+                                new_state <= IDLE;
+                            end if;
+                        else
+                            -- Now we assume that y_range(start) = y_range(end). If somewhere this is fucked up, this will result in unwanted behaviour
+                            -- Horizontal line
+                            if (ig_item_loc_set = '1') then
+                                if (ig_item_loc(9 downto 5) = y_range(4 downto 0)) then
+                                    -- Possible collision
+                                    if (ig_item_loc(4 downto 0) < x_range(4 downto 0)) or (ig_item_loc(4 downto 0) > x_range(9 downto 0)) then
+                                        -- No collision
+                                        -- Check the next line of the snake
 
-                                so_range_clear <= '1'; -- request new part of snake
+                                        so_range_clear <= '1'; -- request new part of snake
 
-                                new_state <= COL_SNAKE;
-                            end if; 
+                                        new_state <= COL_SNAKE;
+                                    else 
+                                        -- Collision
+                                        ig_item_loc_clear <= '1';
+                                        ig_item_ok <= '0';
+                                        
+                                        so_reset <= '1';
+                                        
+                                        new_state <= IDLE;
+                                    end if;
+                                else
+                                    -- No collision
+                                    -- Check the next line of the snake
+
+                                    so_range_clear <= '1'; -- request new part of snake
+
+                                    new_state <= COL_SNAKE;
+                                end if; 
+                            elsif (br_new_head_set = '1') then
+                                if (br_new_head(9 downto 5) = y_range(4 downto 0)) then
+                                    -- Possible collision
+                                    if (br_new_head(4 downto 0) < x_range(4 downto 0)) or (br_new_head(4 downto 0) > x_range(9 downto 0)) then
+                                        -- No collision
+                                        -- Check the next line of the snake
+
+                                        so_range_clear <= '1'; -- request new part of snake
+
+                                        new_state <= COL_SNAKE;
+                                    else 
+                                        -- Collision
+                                        br_new_head_clear <= '1';
+                                        br_new_head_ok <= '0';
+                                        
+                                        so_reset <= '1';
+                                        
+                                        new_state <= IDLE;
+                                    end if;
+                                else
+                                    -- No collision
+                                    -- Check the next line of the snake
+
+                                    so_range_clear <= '1'; -- request new part of snake
+
+                                    new_state <= COL_SNAKE;
+                                end if;
+                            else
+                                -- PANICK
+                                new_state <= IDLE;
+                            end if;
                         end if;
                     end if;
                 else
