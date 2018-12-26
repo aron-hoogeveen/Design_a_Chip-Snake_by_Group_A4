@@ -30,3 +30,9 @@
 
 # Exlude simulation files
 *.sdf
+
+# Exlude backup files (since they should be used locally and not on a remote branch)
+*.bak
+
+# Exclude swp files
+*.swp
