@@ -20,7 +20,7 @@ begin
         end if;
     end process;
 
-    lbl2: process (state, ig_item_loc_set, ig_item_loc, st_req_item_clear, st_req_item_exists, st_item_loc, x_range, y_range, so_range_set, tail)
+    lbl2: process (state, ig_item_loc_set, ig_item_loc, st_req_item_clear, st_req_item_exists, st_item_loc, x_range, y_range, so_range_set, tail, br_new_head_set, br_new_head)
     begin
         case state is
             when IDLE =>
@@ -35,6 +35,9 @@ begin
                 --
                 so_range_clear <= '0';
                 so_reset <= '0';
+                --
+                br_new_head_clear <= '0';
+                br_new_head_ok <= '0';
                 ----
 
 
@@ -57,6 +60,9 @@ begin
                 --
                 so_range_clear <= '0';
                 so_reset <= '0';
+                --
+                br_new_head_clear <= '0';
+                br_new_head_ok <= '0';
                 ----
 
 
@@ -78,8 +84,26 @@ begin
 
                         new_state <= COL_ITEM_ONE;    
                     end if;
+                elsif (br_new_head_set = '1') then
+                    if br_new_head(4 downto 0) = "00000" or br_new_head(4 downto 0) = "11111" or br_new_head(9 downto 5) = "00000" or br_new_head(9 downto 5) = "11000" then
+                        -- There is a collision with the wall. 
+                        -- GAME OVER
+                        br_new_head_clear <= '1';
+                        br_new_head_clear <= '0'; -- GAME OVER 
+                        
+                        new_state <= IDLE; -- soon we will get a reset signal for as long as no new game is started
+                    else
+                        -- check for collision with the items in the field
+                        -- First check if there are items in the field (there should be at least one food item in the field, and additionally there could be a pu item also)
+
+                        -- Retrieve the first item from the storage
+                        st_req_item_set <= '1';
+                        st_req_item_no <= '0';
+
+                        new_state <= COL_ITEM_ONE;    
+                    end if;
                 else
-                    -- TEMPORARY CODE
+                    -- This is kinda weird. Should not happen, so let's go back to our safehaven IDLE
                     new_state <= IDLE;
                 end if;
 
@@ -95,6 +119,9 @@ begin
                 --
                 so_range_clear <= '0';
                 so_reset <= '0';
+                --
+                br_new_head_clear <= '0';
+                br_new_head_ok <= '0';
                 ----
 
 
@@ -104,16 +131,37 @@ begin
                 if (st_req_item_clear = '1') and (st_req_item_exists = '1') then
                     st_req_item_set <= '0';
                     
-                    if (st_item_loc = ig_item_loc) then
-                        -- This location is already occupied
-                        ig_item_loc_clear <= '1';
-                        ig_item_ok <= '0';
+                    if (ig_item_loc_set = '1') then
+                        if (st_item_loc = ig_item_loc) then
+                            -- This location is already occupied
+                            ig_item_loc_clear <= '1';
+                            ig_item_ok <= '0';
 
+                            new_state <= IDLE;
+                        else
+                            -- new_item passed this check
+                            new_state <= COL_ITEM_TWO;
+                        end if;
+                    elsif (br_new_head_set = '1') then
+                        -- NEW HEAD
+                        if (st_item_loc = br_new_head) then
+                            -- This location is already occupied
+                            br_new_head_clear <= '1';
+                            br_new_head_ok <= '0';
+
+                            new_state <= IDLE;
+                        else
+                            -- new_head passed this check
+                            new_state <= COL_ITEM_TWO;
+                        end if;
+                    else
+                        -- ehm, we should not be here. We can either:
+                        --  1. panick and go back to IDLE
+                        --  2. chill back and relax and stay in COL_ITEM_ONE
+
+                        -- PANICK
                         new_state <= IDLE;
-                     else
-                        -- new_item passed this check
-                        new_state <= COL_ITEM_TWO;
-                     end if;
+                    end if;
                 elsif (st_req_item_clear = '1') and (st_req_item_exists = '0') then
                     st_req_item_set <= '0';
                     
@@ -135,6 +183,9 @@ begin
                 --
                 so_range_clear <= '0';
                 so_reset <= '0';
+                --
+                br_new_head_clear <= '0';
+                br_new_head_ok <= '0';
                 ----
 
                 -- Check for a collision with the second item 
@@ -143,16 +194,37 @@ begin
                 if (st_req_item_clear = '1') and (st_req_item_exists = '1') then
                     st_req_item_set <= '0';
                     
-                    if (st_item_loc = ig_item_loc) then
-                        -- This location is already occupied
-                        ig_item_loc_clear <= '1';
-                        ig_item_ok <= '0';
+                    if (ig_item_loc_set = '1') then
+                        if (st_item_loc = ig_item_loc) then
+                            -- This location is already occupied
+                            ig_item_loc_clear <= '1';
+                            ig_item_ok <= '0';
 
+                            new_state <= IDLE;
+                         else
+                            -- new_item passed this check
+                            new_state <= COL_SNAKE;
+                         end if;
+                    elsif (br_new_head_set = '1') then
+                        -- NEW HEAD
+                        if (st_item_loc = br_new_head) then
+                            -- This location is already occupied
+                            br_new_head_clear <= '1';
+                            br_new_head_ok <= '0';
+
+                            new_state <= IDLE;
+                        else
+                            -- new_head passed this check
+                            new_state <= COL_SNAKE;
+                        end if;
+                    else 
+                        -- ehm, we should not be here. We can either:
+                        --  1. panick and go back to IDLE
+                        --  2. chill back and relax and stay in COL_ITEM_ONE
+
+                        -- PANICK
                         new_state <= IDLE;
-                     else
-                        -- new_item passed this check
-                        new_state <= COL_SNAKE;
-                     end if;
+                    end if;
                 elsif (st_req_item_clear = '1') and (st_req_item_exists = '0') then
                     st_req_item_set <= '0';
                     
@@ -174,6 +246,9 @@ begin
                 --
                 so_range_clear <= '0';
                 so_reset <= '0';
+                --
+                br_new_head_clear <= '0';
+                br_new_head_ok <= '0';
                 ----
                 
 

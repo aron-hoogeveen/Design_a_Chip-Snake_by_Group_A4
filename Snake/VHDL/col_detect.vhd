@@ -21,7 +21,12 @@ entity col_detect is
         tail                : in std_logic;
         so_range_set        : in std_logic;
         so_range_clear      : out std_logic;
-        so_reset            : out std_logic
+        so_reset            : out std_logic;
+
+        br_new_head         : in std_logic_vector(9 downto 0);
+        br_new_head_set     : in std_logic;
+        br_new_head_clear   : out std_logic;
+        br_new_head_ok      : out std_logic
     );
         
 end col_detect;
