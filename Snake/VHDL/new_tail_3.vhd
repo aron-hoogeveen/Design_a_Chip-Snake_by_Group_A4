@@ -12,13 +12,15 @@ port (  reset, clk : in std_logic;
 	tail : in std_logic_vector (9 downto 0);
 	flag_new_tail : out std_logic;
 	flg_ok_tail : out std_logic;
+	clr_food : out std_logic;
 	new_tail : out std_logic_vector (9 downto 0)
      );
 end entity new_tail;
 
 architecture behaviour_new_tail of new_tail is
 
-type new_tail_state is (wait_state, wait_for_tale, move_state, end_move_state, wait_low_level_move, wait_for_move, send_back_1, send_back_2, send_back_3);
+type new_tail_state is (wait_state, wait_for_tale, move_state, end_move_state, wait_low_level_move_1, 
+wait_low_level_move_2, wait_for_move, send_back_1, send_back_2, send_back_3, send_back_4, clear_food_1, clear_food_2);
 signal state, next_state: new_tail_state;
 signal new_tail_concatenate_x : std_logic_vector (9 downto 0);
 signal increase_y_tail, increase_x_tail, decrease_y_tail, decrease_x_tail : integer;
@@ -73,11 +75,11 @@ case state is
 	when wait_state =>
 		
 		if (move = '1' and collision_food = '1') then		
-			next_state <= wait_low_level_move;
+			next_state <= wait_low_level_move_1;
 		elsif (move = '1') then
 			next_state <= wait_for_tale;
 		elsif (collision_food = '1') then
-			next_state <= wait_for_move;
+			next_state <= clear_food_1;
 		elsif (flag_tail = '1') then
 			next_state <= send_back_1;
 		else
@@ -86,11 +88,12 @@ case state is
 
 		flg_ok_tail <= '0';
 		flag_new_tail <= '1';
+		clr_food <= '0';
 	
 	when wait_for_move =>
 
 		if (move = '1') then
-			next_state <= wait_low_level_move;
+			next_state <= wait_low_level_move_1;
 		elsif (flag_tail = '1') then
 			next_state <= send_back_2;
 		else
@@ -99,6 +102,7 @@ case state is
 	
 		flg_ok_tail <= '0';
 		flag_new_tail <= '0';
+		clr_food <= '0';
 
 	when wait_for_tale =>
 
@@ -110,6 +114,7 @@ case state is
 		
 		flg_ok_tail <= '0';
 		flag_new_tail <= '0';
+		clr_food <= '0';
 
 	when move_state =>
 	
@@ -121,26 +126,31 @@ case state is
 
 		flg_ok_tail <= '0';
 		flag_new_tail <= '1';
+		clr_food <= '0';
 
 	when end_move_state =>
 
-		next_state <= wait_low_level_move;
+		next_state <= wait_low_level_move_1;
 
 		flg_ok_tail <= '1';
 		flag_new_tail <= '0';
+		clr_food <= '0';
 
-	when wait_low_level_move =>
+	when wait_low_level_move_1 =>
 
 		if (move = '0') then
 			next_state <= wait_state;
+		elsif(collision_food = '1') then
+			next_state <= clear_food_2;
 		elsif (flag_tail = '1') then
 			next_state <= send_back_3;
 		else
-			next_state <= wait_low_level_move;
+			next_state <= wait_low_level_move_1;
 		end if;
 
 		flg_ok_tail <= '0';
 		flag_new_tail <= '0';
+		clr_food <= '0';
 
 	when send_back_1 =>
 
@@ -148,6 +158,7 @@ case state is
 
 		flg_ok_tail <= '1';
 		flag_new_tail <= '0';
+		clr_food <= '0';
 
 	when send_back_2 =>
 
@@ -155,14 +166,50 @@ case state is
 
 		flg_ok_tail <= '1';
 		flag_new_tail <= '0';
+		clr_food <= '0';
 
 	when send_back_3 =>
 
-		next_state <= wait_low_level_move;
+		next_state <= wait_low_level_move_1;
 
 		flg_ok_tail <= '1';
-		flag_new_tail <= '0';					
-			
+		flag_new_tail <= '0';
+		clr_food <= '0';
+	
+	when send_back_4 =>
+
+		next_state <= wait_low_level_move_2;
+
+		flg_ok_tail <= '1';
+		flag_new_tail <= '0';
+		clr_food <= '0';
+	
+	when clear_food_1 =>
+
+		next_state <= wait_for_move;
+		
+		flg_ok_tail <= '0';
+		flag_new_tail <= '0';
+		clr_food <= '1';
+
+	when clear_food_2 =>
+
+		next_state <= wait_low_level_move_2;
+
+		flg_ok_tail <= '0';
+		flag_new_tail <= '0';
+		clr_food <= '1';
+
+	when wait_low_level_move_2 =>
+
+		if (move = '0') then
+			next_state <= wait_for_move;
+		elsif (flag_tail = '1') then
+			next_state <= send_back_4;
+		else
+			next_state <= wait_low_level_move_2;
+		end if;
+		
 end case;
 end process;
 end architecture behaviour_new_tail;
