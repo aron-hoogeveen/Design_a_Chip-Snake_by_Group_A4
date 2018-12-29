@@ -13,7 +13,7 @@ port (  reset, clk : in std_logic;
 	flag_new_tail : out std_logic;
 	flg_ok_tail : out std_logic;
 	clr_food : out std_logic;
-	new_tail : out std_logic_vector (9 downto 0)
+	new_tail_out : out std_logic_vector (9 downto 0)
      );
 end entity new_tail;
 
@@ -41,15 +41,15 @@ process (flag_tail, tail, last_corner, new_tail_concatenate_x1, new_tail_concate
 begin
 		if (tail (9 downto 5) = last_corner (9 downto 5) ) then -- if x lc = x tail -- 
 			if (last_corner (4 downto 0) > tail (4 downto 0) ) then -- if y lc > y tail --
-				new_tail <= new_tail_concatenate_x1;
+				new_tail_out <= new_tail_concatenate_x1;
 			else                                                  -- y lc < y tail --
-				new_tail <= new_tail_concatenate_x2;
+				new_tail_out <= new_tail_concatenate_x2;
 			end if;
 		else							      -- y lc = y tail --														
 			if (last_corner (9 downto 5) > tail (9 downto 5) ) then -- if x lc > x  tail --
-				new_tail <= new_tail_concatenate_y1;
+				new_tail_out <= new_tail_concatenate_y1;
 			else						-- x lc < x tail --
-				new_tail <= new_tail_concatenate_y2; 
+				new_tail_out <= new_tail_concatenate_y2; 
 			end if;
 		end if;
 
