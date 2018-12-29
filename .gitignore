@@ -10,24 +10,25 @@
 **/datasets
 
 # File types that do not contribute to the vhdl coding files
-*.png
-*.swp
-*.lock
-*.ini
-*.mess
-*.wlf
-*.bmp
-*/makefile
+*.[pP][nN][gG]
+*.[sS][wW][pP]
+*.[lL][oO][cC][kK]
+*.[iI][nN][iI]
+*.[mM][eE][sS][sS]
+*.[wW][lL][fF]
+*.[bB][mM][pP]
 .nfs*
-*.sdf
-*bak
+*.[sS][dD][fF]
+*.[bB][aA][kK]
+*.[jJ][pP][gG]
 
 # 'induvidual' files
 *hidden*
 *transcript
 **/vsim_id
+*/makefile
 
 # Configuration files
-*cfg*.vhd
-*syn*
-*par*
+*[cC][fF][gG]*.vhd
+*[sS][yY][nN]*
+*[pP][aA][rR]*
