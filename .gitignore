@@ -21,6 +21,7 @@
 
 # Exclude bitmap files
 *.bmp
+*.BMP
 
 # Exclude makefiles
 */makefile
@@ -38,3 +39,7 @@
 *.swp
 
 *.jpg
+*.JPG
+
+*.png
+*.PNG
