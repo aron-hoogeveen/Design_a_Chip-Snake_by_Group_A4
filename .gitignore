@@ -36,3 +36,5 @@
 
 # Exclude swap(?) files (created by 'nano')
 *.swp
+
+*.jpg
