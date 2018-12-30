@@ -87,7 +87,7 @@ case state is
 		end if;
 
 		flg_ok_tail <= '0';
-		flag_new_tail <= '1';
+		flag_new_tail <= '0';
 		clr_food <= '0';
 	
 	when wait_for_move =>
