@@ -29,6 +29,6 @@
 */makefile
 
 # Configuration files
-*[cC][fF][gG]*.vhd
-*[sS][yY][nN]*
-*[pP][aA][rR]*
+*_[cC][fF][gG]_*.vhd
+*_[sS][yY][nN]_*
+*_[pP][aA][rR]_*
