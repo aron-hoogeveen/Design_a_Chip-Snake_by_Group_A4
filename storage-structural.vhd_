@@ -1,0 +1,7 @@
+library IEEE;
+use IEEE.std_logic_1164.ALL;
+
+architecture structural of storage is
+begin
+end structural;
+
