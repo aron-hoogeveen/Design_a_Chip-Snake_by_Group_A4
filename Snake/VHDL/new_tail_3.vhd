@@ -75,7 +75,7 @@ case state is
 	when wait_state =>
 		
 		if (move = '1' and collision_food = '1') then		
-			next_state <= wait_low_level_move_1;
+			next_state <= clear_food_1;
 		elsif (move = '1') then
 			next_state <= wait_for_tale;
 		elsif (collision_food = '1') then
