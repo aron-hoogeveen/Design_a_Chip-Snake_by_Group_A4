@@ -44,18 +44,18 @@ begin
         end if;
     end process;
 
-    lbl2: process(state, item_set, req_item, item_loc_clear, item_ok, rng_out, new_item_clear, counter_out, register_Q, countfps_done)
+    lbl2: process(state, snake_item_set, snake_req_item, snake_item_loc_clear, snake_item_ok, rng_out, storage_item_clear, counter_out, register_Q, countfps_done)
     begin
         case state is
             when IDLE =>
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -68,24 +68,24 @@ begin
 
                 -- Now check if snake wants us to generate a new item (and what
                 -- for type of item)
-                if (item_set = '1') and (req_item = '0') then
+                if (snake_item_set = '1') and (snake_req_item = '0') then
                     -- Generate a food item "00"
 
                     -- Let Snake know that we proccessed the request
-                    item_clear <= '1';
+                    snake_item_clear <= '1';
                     
                     -- Now loop through the states that put the item type bits 
                     -- into the shift register
                     new_state <= SHIFT_FOOD_ONE;
-                elsif (item_set = '1') and (req_item = '1') then
+                elsif (snake_item_set = '1') and (snake_req_item = '1') then
                     -- Wait for count_fps_done and then generate the pu item
                     countfps_start <= '1';
 
                     -- Let Snake know that we proccessed the request
-                    item_clear <= '1';
+                    snake_item_clear <= '1';
 
                     new_state <= IDLE;
-                elsif (item_set = '0') and (countfps_done = '1') then
+                elsif (snake_item_set = '0') and (countfps_done = '1') then
                     -- Time has gone by, and now generate the pu
                     -- If the fpscounter receives a start signal when it is in the finished state, it will work as a reset signal
                     countfps_start <= '1';
@@ -99,11 +99,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -130,11 +130,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -153,11 +153,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -176,11 +176,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -201,11 +201,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -225,11 +225,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -281,11 +281,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -296,17 +296,17 @@ begin
                 -----
 
 
-                item_loc_set <= '1';
+                snake_item_loc_set <= '1';
 
-                if (item_loc_clear = '0') then
-                    item_loc <= register_Q(11 downto 2);
+                if (snake_item_loc_clear = '0') then
+                    snake_item_loc <= register_Q(11 downto 2);
 
                     new_state <= CHECK_LOC;
-                elsif (item_loc_clear = '1') and (item_ok = '1') then 
-                    item_loc_set <= '0';
+                elsif (snake_item_loc_clear = '1') and (snake_item_ok = '1') then 
+                    snake_item_loc_set <= '0';
 
                     new_state <= SEND_LOC;
-                elsif (item_loc_clear = '1') and (item_ok = '0') then
+                elsif (snake_item_loc_clear = '1') and (snake_item_ok = '0') then
                     -- Calculate a new location
                     new_state <= SHIFT_REG_ONE;
                 else 
@@ -317,11 +317,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -340,11 +340,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -363,11 +363,11 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                item_clear <= '0';
-                item_loc_set <= '0';
-                item_loc <= (others => '0');
-                new_item_set <= '0';
-                new_item <= (others => '0');
+                snake_item_clear <= '0';
+                snake_item_loc_set <= '0';
+                snake_item_loc <= (others => '0');
+                storage_item_set <= '0';
+                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -378,14 +378,14 @@ begin
                 -----
 
 
-                new_item_set <= '1';
+                storage_item_set <= '1';
 
-                if (new_item_clear = '1') then
-                    new_item_set <= '0';
+                if (storage_item_clear = '1') then
+                    storage_item_set <= '0';
 
                     new_state <= IDLE;
                 else 
-                    new_item <= register_Q;
+                    storage_item <= register_Q;
 
                     new_state <= SEND_LOC;
                 end if;
