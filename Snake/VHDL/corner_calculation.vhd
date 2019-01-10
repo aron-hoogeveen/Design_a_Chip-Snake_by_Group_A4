@@ -1,10 +1,10 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 
-entity corner_calculation IS
+entity corner_calc IS
 port (  reset, clk : in std_logic;
-	clear_flag_snake_list : in std_logic;
-	clear_flag_snake_out : in std_logic;
+	clear_flag_sl : in std_logic;
+	clear_flag_so : in std_logic;
 	flg_ok_tail : in std_logic;
 	snake_list : in std_logic_vector (16 downto 0);
 	corner1 : out std_logic_vector (9 downto 0);
@@ -13,16 +13,14 @@ port (  reset, clk : in std_logic;
 	flag_snake_out : out std_logic;
 	flag_next_list : out std_logic
      );
-end entity corner_calculation;
+end entity corner_calc;
 
-architecture behaviour_corner_calc of corner_calculation is
+architecture behaviour_corner_calc of corner_calc is
 
-type corner_calculation_state is (start, calculate, request_next_list, send_tail, send_list, send_tail_2, wait_snake_out);
+type corner_calculation_state is (start, calculate, request_next_list, send_tail, send_list, wait_snake_out, send_tail_2, extra_tail, only_send);
 signal state, next_state: corner_calculation_state;
 signal corner2_concatenate_x : std_logic_vector (9 downto 0);
 signal corner2_concatenate_y : std_logic_vector (9 downto 0); 
-
-
 
 begin
 
@@ -50,7 +48,7 @@ begin
 	end if;
 end process;
 
-process (snake_list, state, clear_flag_snake_list, clear_flag_snake_out)
+process (snake_list, state, clear_flag_sl, clear_flag_so)
 
 
 begin
@@ -62,16 +60,16 @@ case state is
 		next_state <= calculate;
 		
 		flag_next_list <= '0';
-		flag_tail <= '0';
+		flag_tail <= '1';
 		flag_snake_out <= '1';
 
 	when calculate => 
 
-		if (snake_list (0) = '1' and clear_flag_snake_out = '1') then
+		if (snake_list (0) = '1' and clear_flag_so = '1') then
 			next_state <= send_tail_2;
 		elsif (snake_list (0) = '1') then
 			next_state <= send_tail;
-		elsif (clear_flag_snake_out = '1') then
+		elsif (clear_flag_so = '1') then
 			next_state <= request_next_list;
 		else
 			next_state <= calculate;
@@ -83,7 +81,7 @@ case state is
 	
 	when request_next_list =>
 
-		if (clear_flag_snake_list = '1') then		
+		if (clear_flag_sl = '1') then
 			next_state <= send_list;
 		else
 			next_state <= request_next_list;
@@ -95,19 +93,23 @@ case state is
 
 	when send_list =>
 		
-		next_state <= calculate;
+		if (snake_list (0) = '1') then
+			next_state <= extra_tail;
+		else
+			next_state <= only_send;
+		end if;
 
-		flag_snake_out <= '1';	
+		flag_snake_out <= '0';	
 		flag_next_list <= '0';
 		flag_tail <= '0';
 	
 	when send_tail =>
 
-		if (clear_flag_snake_out = '1' and flg_ok_tail = '1') then
+		if (clear_flag_so = '1' and flg_ok_tail = '1') then
 			next_state <= request_next_list;
 		elsif (flg_ok_tail = '1') then
 			next_state <= wait_snake_out;
-		elsif (clear_flag_snake_out = '1') then
+		elsif (clear_flag_so = '1') then
 			next_state <= send_tail_2;
 		else
 			next_state <= send_tail;
@@ -116,22 +118,22 @@ case state is
 		flag_snake_out <= '0';
 		flag_next_list <= '0';
 		flag_tail <= '1';
-	
+
 	when send_tail_2 =>
 
 		if (flg_ok_tail = '1') then
 			next_state <= request_next_list;
 		else
 			next_state <= send_tail_2;
-		end if; 
+		end if;
 
 		flag_snake_out <= '0';
 		flag_next_list <= '0';
 		flag_tail <= '1';
 
 	when wait_snake_out =>
-		
-		if (clear_flag_snake_out = '1') then
+
+		if (clear_flag_so = '1') then
 			next_state <= request_next_list;
 		else
 			next_state <= wait_snake_out;
@@ -140,8 +142,23 @@ case state is
 		flag_snake_out <= '0';
 		flag_next_list <= '0';
 		flag_tail <= '0';
+	
+	when extra_tail =>
 
+		next_state <= calculate;
+
+		flag_snake_out <= '1';
+		flag_next_list <= '0';
+		flag_tail <= '1';
+	
+	when only_send =>
+
+		next_state <= calculate;
+
+ 		flag_snake_out <= '1';
+		flag_next_list <= '0';
+		flag_tail <= '0';		
 
 end case;
 end process;
-end architecture behaviour_corner_calc;
+end behaviour_corner_calc;
