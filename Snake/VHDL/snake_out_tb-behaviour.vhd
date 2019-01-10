@@ -9,12 +9,14 @@ architecture behaviour of snake_out_tb is
            corner2      : in  std_logic_vector(9 downto 0);
            clr_flag_g   : in  std_logic;
            clr_flag_chc : in  std_logic;
+		   tail			: in  std_logic;
    
            clr_flag_coc : out std_logic;
            x_bounds     : out std_logic_vector(9 downto 0);
            y_bounds     : out std_logic_vector(9 downto 0);
            flag_g       : out std_logic;
-           flag_chc     : out std_logic);
+           flag_chc     : out std_logic;
+		   tail_out		: out std_logic);
    end component;
    signal reset, clk		 : std_logic;
    signal flag_coc     : std_logic;
@@ -27,8 +29,10 @@ architecture behaviour of snake_out_tb is
    signal y_bounds     : std_logic_vector(9 downto 0);
    signal flag_g       : std_logic;
    signal flag_chc     : std_logic;
+   signal tail		   : std_logic;
+   signal tail_out	   : std_logic;
 begin
-test: snake_out port map (reset, clk, flag_coc, corner1, corner2, clr_flag_g, clr_flag_chc, clr_flag_coc, x_bounds, y_bounds, flag_g, flag_chc);
+test: snake_out port map (reset, clk, flag_coc, corner1, corner2, clr_flag_g, clr_flag_chc, tail, clr_flag_coc, x_bounds, y_bounds, flag_g, flag_chc, tail_out);
    clk <= '1' after 0 ns,
         '0' after 40 ns when clk /= '0' else '1' after 40 ns;
    reset <= 			'1' after 0 ns,
@@ -38,6 +42,10 @@ test: snake_out port map (reset, clk, flag_coc, corner1, corner2, clr_flag_g, cl
 			'0' after 500 ns,
 			'1' after 1280 ns,
 			'0' after 1400 ns;
+------------------------------------------
+	tail <=			'0' after 0 ns,
+					'1' after 1280 ns,
+					'0' after 1400 ns;
 ------------------------------------------
    corner1(0) <= '0' after 0 ns;
    corner1(1) <= '0' after 0 ns;

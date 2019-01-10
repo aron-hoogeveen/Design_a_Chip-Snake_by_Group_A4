@@ -33,9 +33,15 @@ case state is
 		y_bounds <= "0000000000";
 		flag_g <= '0';
 		flag_chc <= '0';
+		tail_out <= '0';
 		
 		if flag_coc = '1' then
 			next_state <= compare_x;
+			if tail = '1' then
+				tail_out <= '1';
+			else
+				tail_out <= '0';
+			end if;
 		else
 			next_state <= idle;
 		end if;
@@ -119,6 +125,7 @@ case state is
 
 		if clr_flag_chc = '1' then
 			flag_chc <= '0';
+			tail_out <= '0';
 			next_state <= clear;
 		else
 			next_state <= wait_chc;
@@ -129,6 +136,7 @@ case state is
 		clr_flag_coc <= '1';
 		flag_g <= '0';
 		flag_chc <= '0';
+		tail_out <= '0';
 		
 		next_state <= idle;
 	when others =>
