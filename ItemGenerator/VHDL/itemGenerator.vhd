@@ -17,7 +17,7 @@ entity itemgenerator is
         storage_item_clear  : in std_logic;                         -- clear flag from Storage to tell us they processed the new item
         storage_item        : out std_logic_vector(11 downto 0);    -- the new_item that storage needs to store
 
-        countfps_fps    : in std_logic;                         -- a clock signal with frequency 30, comming from the graphics module
+        countfps_fps    : in std_logic);                         -- a clock signal with frequency 30, comming from the graphics module
 
         -- Only for test purpose:
         --rng_out         : in std_logic;
