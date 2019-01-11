@@ -55,27 +55,12 @@ case state is
 		flag_chc <= '0';
 	
 		if corner1 (4 downto 0) = corner2 (4 downto 0) then
-			x_bounds <= corner1 (4 downto 0) & corner2 (4 downto 0);
-			next_state <= create_ybounds;
-		else
-			y_bounds <= corner1 (9 downto 5) & corner2 (9 downto 5);
+			y_bounds <= corner1 (4 downto 0) & corner2 (4 downto 0);
 			next_state <= create_xbounds;
-		end if;
-	
-	when create_ybounds =>
-	
-		clr_flag_coc <= '0';
-		y_bounds <= "0000000000";
-		flag_g <= '0';
-		flag_chc <= '0';
-
-		if corner1 (9 downto 5) > corner2 (9 downto 5) then
-			y_bounds <= corner1 (9 downto 5) & corner2 (9 downto 5);
 		else
-			y_bounds <= corner2 (9 downto 5) & corner1 (9 downto 5);
-		end if;		
-
-		next_state <= set_flags;
+			x_bounds <= corner1 (9 downto 5) & corner2 (9 downto 5);
+			next_state <= create_ybounds;
+		end if;
 	
 	when create_xbounds =>
 	
@@ -84,10 +69,25 @@ case state is
 		flag_g <= '0';
 		flag_chc <= '0';
 
-		if corner1 (4 downto 0) > corner2 (4 downto 0) then
-			x_bounds <= corner1 (4 downto 0) & corner2 (4 downto 0);
+		if corner1 (9 downto 5) > corner2 (9 downto 5) then
+			x_bounds <= corner1 (9 downto 5) & corner2 (9 downto 5);
 		else
-			x_bounds <= corner2 (4 downto 0) & corner1 (4 downto 0);
+			x_bounds <= corner2 (9 downto 5) & corner1 (9 downto 5);
+		end if;		
+
+		next_state <= set_flags;
+	
+	when create_ybounds =>
+	
+		clr_flag_coc <= '0';
+		y_bounds <= "0000000000";
+		flag_g <= '0';
+		flag_chc <= '0';
+
+		if corner1 (4 downto 0) > corner2 (4 downto 0) then
+			y_bounds <= corner1 (4 downto 0) & corner2 (4 downto 0);
+		else
+			y_bounds <= corner2 (4 downto 0) & corner1 (4 downto 0);
 		end if;		
 
 		next_state <= set_flags;
