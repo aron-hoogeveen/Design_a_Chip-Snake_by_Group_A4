@@ -43,7 +43,7 @@ test: itemgenerator port map (clk, reset, snake_item_set, snake_item_clear, snak
    reset <= '1' after 0 ns,
             '0' after 160 ns;
 
-   snake_item_set <= '0' after 0 ns,
+   snake_item_set <= '0' after 5 ns,
                '1' after 160 ns,
                '0' after 240 ns,
                '1' after 2960 ns,
@@ -52,21 +52,21 @@ test: itemgenerator port map (clk, reset, snake_item_set, snake_item_clear, snak
    snake_req_item <= '0' after 0 ns,
                '1' after 2960 ns;
 
-   snake_item_loc_clear <= '0' after 0 ns,
+   snake_item_loc_clear <= '0' after 7 ns,
                      '1' after 1360 ns,
                      '0' after 1440 ns,
                      '1' after 2560 ns,
                      '0' after 2640 ns;
 
-   snake_item_ok <= '0' after 0 ns,
+   snake_item_ok <= '0' after 8 ns,
               '1' after 2560 ns,
               '0' after 2640 ns;
 
-   storage_item_clear <= '0' after 0 ns,
+   storage_item_clear <= '0' after 9 ns,
                      '1' after 2800 ns,
                      '0' after 2880 ns;
 
-   countfps_fps <= '1' after 0 ns,
+   countfps_fps <= '1' after 7 ns,
                    '0' after 80 ns when countfps_fps /= '0' else '1' after 80 ns;
 end behaviour;
 
