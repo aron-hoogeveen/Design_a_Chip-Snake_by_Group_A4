@@ -20,7 +20,7 @@ end component;
 
     type itemGenerator_state is (IDLE, GEN_TYPE, GEN_TYPE_PU_ONE, GEN_TYPE_PU_TWO, SHIFT_FOOD_ONE, SHIFT_FOOD_TWO, GEN_LOC, SHIFT_REG_ONE, SHIFT_REG_TWO, CHECK_LOC, SEND_LOC);
     signal state, new_state: itemGenerator_state;
-    signal counter_out, count_comp: std_logic_vector(3 downto 0);
+    signal counter_out: std_logic_vector(3 downto 0);
     signal counter_enable, counter_reset, register_enable, register_D: std_logic;
     signal rng_out: std_logic;  -- only enable this signal when the rng is finished 
     signal register_Q: std_logic_vector(11 downto 0);
@@ -51,7 +51,6 @@ begin
                 --------------------
                 -- Initial values --
                 --------------------
-                snake_item_clear <= '0';
                 snake_item_loc_set <= '0';
                 snake_item_loc <= (others => '0');
                 storage_item_set <= '0';
@@ -62,7 +61,7 @@ begin
                 register_enable <= '0';
                 register_D <= '0';
                 -----
-                countfps_start <= '0';
+                
                 -----
 
 
@@ -77,6 +76,7 @@ begin
                     -- Now loop through the states that put the item type bits 
                     -- into the shift register
                     new_state <= SHIFT_FOOD_ONE;
+                    countfps_start <= '0';
                 elsif (snake_item_set = '1') and (snake_req_item = '1') then
                     -- Wait for count_fps_done and then generate the pu item
                     countfps_start <= '1';
@@ -88,11 +88,14 @@ begin
                 elsif (snake_item_set = '0') and (countfps_done = '1') then
                     -- Time has gone by, and now generate the pu
                     -- If the fpscounter receives a start signal when it is in the finished state, it will work as a reset signal
+                    snake_item_clear <= '0';
                     countfps_start <= '1';
 
                     new_state <= GEN_TYPE;
                 else
                     new_state <= IDLE;
+                    snake_item_clear <= '0';
+                    countfps_start <= '0';
                 end if;
 
             when GEN_TYPE =>
@@ -107,8 +110,6 @@ begin
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
-                register_enable <= '0';
-                register_D <= '0';
                 -----
                 countfps_start <= '0';
                 -----
@@ -138,8 +139,6 @@ begin
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
-                register_enable <= '0';
-                register_D <= '0';
                 -----
                 countfps_start <= '0';
                 -----
@@ -161,8 +160,6 @@ begin
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
-                register_enable <= '0';
-                register_D <= '0';
                 -----
                 countfps_start <= '0';
                 -----
@@ -184,8 +181,6 @@ begin
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
-                register_enable <= '0';
-                register_D <= '0';
                 -----
                 countfps_start <= '0';
                 -----
@@ -209,8 +204,6 @@ begin
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
-                register_enable <= '0';
-                register_D <= '0';
                 -----
                 countfps_start <= '0';
                 -----
@@ -231,8 +224,6 @@ begin
                 storage_item_set <= '0';
                 storage_item <= (others => '0');
                 -----
-                counter_reset <= '1';
-                counter_enable <= '0';
                 register_enable <= '0';
                 register_D <= '0';
                 -----
@@ -245,19 +236,21 @@ begin
                 -- 
 
                 -- Enable the internal counter
-                counter_enable <= '1';
-                counter_reset <= '0';
+                --counter_enable <= '1';
+                --counter_reset <= '0';
 
                 -- Check if the x coordinate does not go out of bound
                 if (counter_out = "1001") then          -- The last bit will now be generated
                     if (register_Q(11) = '1') then 
                         counter_enable <= '1';
+                        counter_reset <= '0';
                         register_enable <= '1';
                         register_D <= '0';              -- This is for keeping the y coordinate in bound
 
                         new_state <= GEN_LOC;
                     else
                         counter_enable <= '1';
+                        counter_reset <= '0';
                         register_enable <= '1';
                         register_D <= rng_out;
 
@@ -265,12 +258,16 @@ begin
                     end if;
                 elsif (counter_out = "1010") then      -- "1010" equals decimal 10
                     counter_enable <= '0';
+                    counter_reset <= '1';
+                    register_enable <= '0';
+                    register_D <= '0';
                     
                     new_state <= CHECK_LOC;
                 else
                     -- Add new random bit to the shift register
                     -- There should be implemented a check here, that checks if the x coordinate is not out of bounds, otherwise make it fit inside the grid.
                     counter_enable <= '1';
+                    counter_reset <= '0';
                     register_enable <= '1';
                     register_D <= rng_out;
 
@@ -282,8 +279,6 @@ begin
                 -- Initial values --
                 --------------------
                 snake_item_clear <= '0';
-                snake_item_loc_set <= '0';
-                snake_item_loc <= (others => '0');
                 storage_item_set <= '0';
                 storage_item <= (others => '0');
                 -----
@@ -295,21 +290,26 @@ begin
                 countfps_start <= '0';
                 -----
 
-
-                snake_item_loc_set <= '1';
-
                 if (snake_item_loc_clear = '0') then
+                    snake_item_loc_set <= '1';
                     snake_item_loc <= register_Q(11 downto 2);
 
                     new_state <= CHECK_LOC;
                 elsif (snake_item_loc_clear = '1') and (snake_item_ok = '1') then 
                     snake_item_loc_set <= '0';
+                    snake_item_loc <= (others => '0');
 
                     new_state <= SEND_LOC;
                 elsif (snake_item_loc_clear = '1') and (snake_item_ok = '0') then
                     -- Calculate a new location
+                    snake_item_loc_set <= '0';
+                    snake_item_loc <= (others => '0');
+
                     new_state <= SHIFT_REG_ONE;
                 else 
+                    snake_item_loc_set <= '0';
+                    snake_item_loc <= (others => '0');
+
                     new_state <= CHECK_LOC;
                 end if;
 
@@ -325,8 +325,6 @@ begin
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
-                register_enable <= '0';
-                register_D <= '0';
                 -----
                 countfps_start <= '0';
                 -----
@@ -348,8 +346,6 @@ begin
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
-                register_enable <= '0';
-                register_D <= '0';
                 -----
                 countfps_start <= '0';
                 -----
@@ -367,7 +363,6 @@ begin
                 snake_item_loc_set <= '0';
                 snake_item_loc <= (others => '0');
                 storage_item_set <= '0';
-                storage_item <= (others => '0');
                 -----
                 counter_reset <= '1';
                 counter_enable <= '0';
@@ -377,14 +372,13 @@ begin
                 countfps_start <= '0';
                 -----
 
-
-                storage_item_set <= '1';
-
                 if (storage_item_clear = '1') then
                     storage_item_set <= '0';
+                    storage_item <= (others => '0');
 
                     new_state <= IDLE;
                 else 
+                    storage_item_set <= '1';
                     storage_item <= register_Q;
 
                     new_state <= SEND_LOC;
@@ -392,7 +386,5 @@ begin
                 -- If the storage fails to respond with an send_storage_succes, then this will hang forever: IG = kapot
         end case;
     end process;
-
-    count_comp <= "1010";
 end behaviour;
 
