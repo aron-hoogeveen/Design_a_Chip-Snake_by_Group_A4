@@ -10,6 +10,7 @@ port (  reset, clk : in std_logic;
 	corner1 : out std_logic_vector (9 downto 0);
 	corner2 : out std_logic_vector (9 downto 0);
 	flag_tail : out std_logic;
+	flag_tail_so : out std_logic;
 	flag_snake_out : out std_logic;
 	flag_next_list : out std_logic
      );
@@ -60,8 +61,9 @@ case state is
 		next_state <= calculate;
 		
 		flag_next_list <= '0';
-		flag_tail <= '1';
+		flag_tail <= '0';
 		flag_snake_out <= '1';
+		flag_tail_so <= '1';
 
 	when calculate => 
 
@@ -78,6 +80,7 @@ case state is
 		flag_snake_out <= '0';	
 		flag_next_list <= '0';
 		flag_tail <= '0';
+		flag_tail_so <= '0';
 	
 	when request_next_list =>
 
@@ -89,7 +92,8 @@ case state is
 		
 		flag_snake_out <= '0';
 		flag_next_list <= '1';
-		flag_tail <= '0';	
+		flag_tail <= '0';
+		flag_tail_so <= '0';	
 
 	when send_list =>
 		
@@ -102,6 +106,7 @@ case state is
 		flag_snake_out <= '0';	
 		flag_next_list <= '0';
 		flag_tail <= '0';
+		flag_tail_so <= '0';
 	
 	when send_tail =>
 
@@ -118,6 +123,7 @@ case state is
 		flag_snake_out <= '0';
 		flag_next_list <= '0';
 		flag_tail <= '1';
+		flag_tail_so <= '0';
 
 	when send_tail_2 =>
 
@@ -130,6 +136,7 @@ case state is
 		flag_snake_out <= '0';
 		flag_next_list <= '0';
 		flag_tail <= '1';
+		flag_tail_so <= '0';
 
 	when wait_snake_out =>
 
@@ -142,6 +149,7 @@ case state is
 		flag_snake_out <= '0';
 		flag_next_list <= '0';
 		flag_tail <= '0';
+		flag_tail_so <= '0';
 	
 	when extra_tail =>
 
@@ -149,7 +157,8 @@ case state is
 
 		flag_snake_out <= '1';
 		flag_next_list <= '0';
-		flag_tail <= '1';
+		flag_tail <= '0';
+		flag_tail_so <= '1';
 	
 	when only_send =>
 
@@ -157,7 +166,8 @@ case state is
 
  		flag_snake_out <= '1';
 		flag_next_list <= '0';
-		flag_tail <= '0';		
+		flag_tail <= '0';
+		flag_tail_so <= '0';		
 
 end case;
 end process;

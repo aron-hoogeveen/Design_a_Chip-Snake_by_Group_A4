@@ -5,7 +5,7 @@ use IEEE.numeric_std.all;
 entity new_tail is
 port (  reset, clk : in std_logic;
 	flag_tail : in std_logic;
-	clear_flag_storage : in std_logic;
+	clr_flg_stor : in std_logic;
 	collision_food : in std_logic;
 	move : in std_logic;
 	last_corner : in std_logic_vector (9 downto 0);
@@ -13,7 +13,7 @@ port (  reset, clk : in std_logic;
 	flag_new_tail : out std_logic;
 	flg_ok_tail : out std_logic;
 	clr_food : out std_logic;
-	new_tail_out : out std_logic_vector (9 downto 0)
+	new_tail_out : out std_logic_vector (5 downto 0)
      );
 end entity new_tail;
 
@@ -25,6 +25,7 @@ signal state, next_state: new_tail_state;
 signal new_tail_concatenate_x : std_logic_vector (9 downto 0);
 signal increase_y_tail, increase_x_tail, decrease_y_tail, decrease_x_tail : integer;
 signal new_tail_concatenate_x1, new_tail_concatenate_x2, new_tail_concatenate_y1, new_tail_concatenate_y2 : std_logic_vector (9 downto 0);
+signal new_tail_out_s : std_logic_vector (9 downto 0);
 
 begin
 
@@ -41,16 +42,24 @@ process (flag_tail, tail, last_corner, new_tail_concatenate_x1, new_tail_concate
 begin
 		if (tail (9 downto 5) = last_corner (9 downto 5) ) then -- if x lc = x tail -- 
 			if (last_corner (4 downto 0) > tail (4 downto 0) ) then -- if y lc > y tail --
-				new_tail_out <= new_tail_concatenate_x1;
+				new_tail_out_s <= new_tail_concatenate_x1;
 			else                                                  -- y lc < y tail --
-				new_tail_out <= new_tail_concatenate_x2;
+				new_tail_out_s <= new_tail_concatenate_x2;
 			end if;
 		else							      -- y lc = y tail --														
 			if (last_corner (9 downto 5) > tail (9 downto 5) ) then -- if x lc > x  tail --
-				new_tail_out <= new_tail_concatenate_y1;
+				new_tail_out_s <= new_tail_concatenate_y1;
 			else						-- x lc < x tail --
-				new_tail_out <= new_tail_concatenate_y2; 
+				new_tail_out_s <= new_tail_concatenate_y2; 
 			end if;
+		end if;
+
+		if ( tail (9 downto 5) = new_tail_out_s (9 downto 5) ) then -- if x tail = x new tail --
+			new_tail_out (5 downto 1) <= 	new_tail_out_s (4 downto 0); -- new_tail gives y coordinate -- 
+			new_tail_out (0) <= '1';
+		else                                        								-- then y tail = y new tail
+			new_tail_out (5 downto 1) <= new_tail_out_s (9 downto 5);  -- new_tail gives x coordinate --
+			new_tail_out (0) <= '0';
 		end if;
 
 end process;
@@ -66,7 +75,7 @@ begin
 	end if;
 end process;
 
-process (flag_tail, collision_food, move, tail, state, last_corner, clear_flag_storage)
+process (flag_tail, collision_food, move, tail, state, last_corner, clr_flg_stor)
 
 begin
 
@@ -118,7 +127,7 @@ case state is
 
 	when move_state =>
 	
-		if (clear_flag_storage = '1') then
+		if (clr_flg_stor = '1') then
 			next_state <= end_move_state;
 		else
 			next_state <= move_state;
