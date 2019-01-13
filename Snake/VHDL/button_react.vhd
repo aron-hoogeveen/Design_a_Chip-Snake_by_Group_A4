@@ -10,6 +10,9 @@ entity button_react is
 		corner_clr_flag		: in std_logic;						--Receives a clr_flag signal when the corner has been processed
 		chc_clr_flag		: in std_logic;						--Receives a clr_flag signal when the new_head has been processed by the check collision component
 		
+		head_ok				: in std_logic;						--From col_detect
+		inversion			: in std_logic;						--Also from col_detect
+		
 		new_head			: out std_logic_vector(11 downto 0);--Sends the new coordinate of the head to the check collision module module and the storage module
 		corner 				: out std_logic_vector(5 downto 0);	--Sends the new corner coordinate to the storage module
 		corner_flag			: out std_logic;					--Sends a flag to the storage module so the module knows a new corner coordinate is ready
