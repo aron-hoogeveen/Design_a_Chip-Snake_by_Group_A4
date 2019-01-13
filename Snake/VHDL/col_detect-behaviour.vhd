@@ -15,7 +15,7 @@ use IEEE.std_logic_arith.ALL;
 use IEEE.std_logic_unsigned.ALL;
 
 architecture behaviour of col_detect is
-    type col_detect_state is (IDLE, CHECK_COL, COL_ITEM_ONE, COL_ITEM_TWO, COL_SNAKE);
+    type col_detect_state is (IDLE, CHECK_COL, COL_ITEM_ONE, COL_ITEM_TWO, COL_SNAKE, WAIT_FOR_SPEED, WAIT_FOR_BR, WAIT_FOR_GR);
     signal state, new_state: col_detect_state;
 
 begin
@@ -31,7 +31,7 @@ begin
         end if;
     end process;
 
-    lbl2: process (state, ig_item_loc_set, ig_item_loc, st_item_clear, st_item_exists, st_item_type, st_item_loc, x_range, y_range, so_range_set, tail, br_new_head_set, br_new_head, br_inverse_controls_clear, gr_flickering_clear, sp_increase_speed_clear)
+    lbl2: process (state, ig_item_loc_set, ig_item_loc, st_item_clear, st_item_exists, st_item_type, st_item_loc, x_range, y_range, so_range_set, tail, br_new_head_set, br_new_head_loc, br_inverse_controls_clear, gr_flickering_clear, sp_increase_speed_clear)
     begin
         case state is
             when IDLE =>
@@ -57,7 +57,7 @@ begin
                 ----
 
 
-                if (ig_item_loc_set = '1') or (new_head_set = '1') then
+                if (ig_item_loc_set = '1') or (br_new_head_set = '1') then
                     new_state <= CHECK_COL;
                 else
                     new_state <= IDLE;
@@ -118,7 +118,7 @@ begin
                     --     Collision with wall check --
                     -----------------------------------
 
-                    if (br_new_head(4 downto 0) = "00000") or (br_new_head(4 downto 0) = "11111") or (br_new_head(9 downto 5) = "00000") or (br_new_head(9 downto 5) = "11000") then
+                    if (br_new_head_loc(4 downto 0) = "00000") or (br_new_head_loc(4 downto 0) = "11111") or (br_new_head_loc(9 downto 5) = "00000") or (br_new_head_loc(9 downto 5) = "11000") then
                         -- There is a collision with the wall. 
                         -- GAME OVER
                         br_new_head_clear <= '1';
@@ -447,9 +447,9 @@ begin
                                 end if;
                             elsif (br_new_head_set = '1') then
                                 -- NEW HEAD
-                                if (br_new_head(4 downto 0) = x_range(4 downto 0)) then
+                                if (br_new_head_loc(4 downto 0) = x_range(4 downto 0)) then
                                     -- Possible collision
-                                    if (br_new_head(9 downto 5) < y_range(4 downto 0)) or (br_new_head(9 downto 5) > y_range(9 downto 5)) then
+                                    if (br_new_head_loc(9 downto 5) < y_range(4 downto 0)) or (br_new_head_loc(9 downto 5) > y_range(9 downto 5)) then
                                         -- No collision,  done.
 
                                         so_range_clear <= '1'; -- request new part of snake
@@ -524,9 +524,9 @@ begin
                                 end if; 
                             elsif (br_new_head_set = '1') then
                                 -- NEW HEAD
-                                if (br_new_head(9 downto 5) = y_range(4 downto 0)) then
+                                if (br_new_head_loc(9 downto 5) = y_range(4 downto 0)) then
                                     -- Possible collision
-                                    if (br_new_head(4 downto 0) < x_range(4 downto 0)) or (br_new_head(4 downto 0) > x_range(9 downto 0)) then
+                                    if (br_new_head_loc(4 downto 0) < x_range(4 downto 0)) or (br_new_head_loc(4 downto 0) > x_range(9 downto 0)) then
                                         -- No collision, done.
 
                                         so_range_clear <= '1'; -- request new part of snake
@@ -595,9 +595,9 @@ begin
                                     new_state <= COL_SNAKE;
                                 end if;
                             elsif (br_new_head_set = '1') then
-                                if (br_new_head(4 downto 0) = x_range(4 downto 0)) then
+                                if (br_new_head_loc(4 downto 0) = x_range(4 downto 0)) then
                                     -- Possible collision
-                                    if (br_new_head(9 downto 5) < y_range(4 downto 0)) or (br_new_head(9 downto 5) > y_range(9 downto 5)) then
+                                    if (br_new_head_loc(9 downto 5) < y_range(4 downto 0)) or (br_new_head_loc(9 downto 5) > y_range(9 downto 5)) then
                                         -- No collision
                                         -- Check the next line of the snake
 
@@ -658,9 +658,9 @@ begin
                                     new_state <= COL_SNAKE;
                                 end if; 
                             elsif (br_new_head_set = '1') then
-                                if (br_new_head(9 downto 5) = y_range(4 downto 0)) then
+                                if (br_new_head_loc(9 downto 5) = y_range(4 downto 0)) then
                                     -- Possible collision
-                                    if (br_new_head(4 downto 0) < x_range(4 downto 0)) or (br_new_head(4 downto 0) > x_range(9 downto 0)) then
+                                    if (br_new_head_loc(4 downto 0) < x_range(4 downto 0)) or (br_new_head_loc(4 downto 0) > x_range(9 downto 0)) then
                                         -- No collision
                                         -- Check the next line of the snake
 
@@ -700,7 +700,7 @@ begin
                     new_state <= IDLE;
                 else
                     new_state <= WAIT_FOR_SPEED;
-                end if
+                end if;
 
             when WAIT_FOR_BR =>
                 -- wait for button react
@@ -708,7 +708,7 @@ begin
                     new_state <= IDLE;
                 else
                     new_state <= WAIT_FOR_BR;
-                end if
+                end if;
 
             when WAIT_FOR_GR =>
                 -- wait for graphics

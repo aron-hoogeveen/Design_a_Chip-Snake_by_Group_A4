@@ -24,12 +24,18 @@ entity col_detect is
         so_range_clear      : out std_logic;
         so_reset            : out std_logic;
 
-        br_new_head         : in std_logic_vector(9 downto 0);
+        br_new_head_loc         : in std_logic_vector(9 downto 0);
         br_new_head_set     : in std_logic;
         br_new_head_clear   : out std_logic;
         br_new_head_ok      : out std_logic;
         br_inverse_controls_set : out std_logic;
-        br_inverse_controls_set : in std_logic;
+        br_inverse_controls_clear: in std_logic;
+
+        gr_flickering_clear : in std_logic;
+        gr_flickering_set   : out std_logic;
+
+        sp_increase_speed_clear : in std_logic;
+        sp_increase_speed_set   : out std_logic;
 
         food_collision      : out std_logic
     );
