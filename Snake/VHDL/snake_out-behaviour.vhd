@@ -53,6 +53,7 @@ case state is
 		y_bounds <= "0000000000";
 		flag_g <= '0';
 		flag_chc <= '0';
+		tail_out <= '0';
 	
 		if corner1 (4 downto 0) = corner2 (4 downto 0) then
 			y_bounds <= corner1 (4 downto 0) & corner2 (4 downto 0);
@@ -66,8 +67,10 @@ case state is
 	
 		clr_flag_coc <= '0';
 		x_bounds <= "0000000000";
+		y_bounds <= y_bounds;
 		flag_g <= '0';
 		flag_chc <= '0';
+		tail_out <= '0';
 
 		if corner1 (9 downto 5) > corner2 (9 downto 5) then
 			x_bounds <= corner1 (9 downto 5) & corner2 (9 downto 5);
@@ -81,8 +84,10 @@ case state is
 	
 		clr_flag_coc <= '0';
 		y_bounds <= "0000000000";
+		x_bounds <= x_bounds;
 		flag_g <= '0';
 		flag_chc <= '0';
+		tail_out <= '0';
 
 		if corner1 (4 downto 0) > corner2 (4 downto 0) then
 			y_bounds <= corner1 (4 downto 0) & corner2 (4 downto 0);
@@ -97,6 +102,9 @@ case state is
 		clr_flag_coc <= '0';
 		flag_g <= '1';
 		flag_chc <= '1';
+		x_bounds <= x_bounds;
+		y_bounds <= y_bounds;
+		tail_out <= tail;
 		
 		if clr_flag_g = '1' then
 			if clr_flag_chc = '1' then
@@ -113,21 +121,34 @@ case state is
 		end if;
 		
 	when wait_g =>
+	
+		clr_flag_coc <= '0';
+		flag_chc <= '0';
+		x_bounds <= x_bounds;
+		y_bounds <= y_bounds;
+		tail_out <= tail_out;
 
 		if clr_flag_g = '1' then
 			flag_g <= '0';
 			next_state <= clear;
 		else
+			flag_g <= '1';
 			next_state <= wait_g;
 		end if;
 		
 	when wait_chc =>
+	
+		clr_flag_coc <= '0';
+		flag_g <= '0';
+		x_bounds <= x_bounds;
+		y_bounds <= y_bounds;
+		tail_out <= tail_out;
 
 		if clr_flag_chc = '1' then
 			flag_chc <= '0';
-			tail_out <= '0';
 			next_state <= clear;
 		else
+			flag_chc <= '1';
 			next_state <= wait_chc;
 		end if;
 	
@@ -137,6 +158,8 @@ case state is
 		flag_g <= '0';
 		flag_chc <= '0';
 		tail_out <= '0';
+		x_bounds <= x_bounds;
+		y_bounds <= y_bounds;
 		
 		next_state <= idle;
 	when others =>

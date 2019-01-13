@@ -95,4 +95,3 @@ test: snake_out port map (reset, clk, flag_coc, corner1, corner2, clr_flag_g, cl
 			'1' after 1600 ns,
 			'0' after 1800 ns;
 end behaviour;
-
