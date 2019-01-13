@@ -34,6 +34,9 @@ begin
     lbl2: process (state, ig_item_loc_set, ig_item_loc, st_item_clear, st_item_exists, st_item_type, st_item_loc, x_range, y_range, so_range_set, tail, br_new_head_set, br_new_head_loc, br_inverse_controls_clear, gr_flickering_clear, sp_increase_speed_clear)
     begin
         case state is
+--====================
+-- IDLE
+--====================
             when IDLE =>
                 --------------------
                 -- Initial values --
@@ -62,22 +65,17 @@ begin
                 else
                     new_state <= IDLE;
                 end if;
-                
+--====================
+-- CHECK COLLISION
+--====================                
             when CHECK_COL =>
                 --------------------
                 -- Initial values --
                 --------------------
-                ig_item_loc_clear <= '0';
-                ig_item_ok <= '0';
-                --
-                st_item_set <= '0';
-                st_item_no <= '0';
                 --
                 so_range_clear <= '0';
                 so_reset <= '0';
                 --
-                br_new_head_clear <= '0';
-                br_new_head_ok <= '0';
                 br_inverse_controls_set <= '0';
                 --
                 gr_flickering_set <= '0';
@@ -98,15 +96,27 @@ begin
                         -- Signal IG that the location is not available
                         ig_item_loc_clear <= '1';   -- processing done
                         ig_item_ok <= '0';
+
+                        st_item_set <= '0';
+                        st_item_no <= '0';
+
+                        br_new_head_clear <= '0';
+                        br_new_head_ok <= '0';
                         
                         new_state <= IDLE;
                     else
                         -- check for collision with the items in the field
                         -- First check if there are items in the field (there should be at least one food item in the field, and additionally there could be a pu item also)
 
+                        ig_item_loc_clear <= '0';
+                        ig_item_loc_ok <= '0';
+
                         -- Retrieve the first item from the storage
                         st_item_set <= '1';
                         st_item_no <= '0';
+
+                        br_new_head_clear <= '0';
+                        br_new_head_ok <= '0';
 
                         new_state <= COL_ITEM_ONE;    
                     end if;
@@ -123,6 +133,12 @@ begin
                         -- GAME OVER
                         br_new_head_clear <= '1';
                         br_new_head_ok <= '0'; -- GAME OVER 
+
+                        ig_item_loc_clear <= '0';
+                        ig_item_loc_ok <= '0';
+
+                        st_item_set <= '0';
+                        st_item_no <= '0';
                         
                         new_state <= IDLE; -- soon we will get a reset signal for as long as no new game is started
                     else
@@ -133,39 +149,44 @@ begin
                         st_item_set <= '1';
                         st_item_no <= '0';
 
+                        ig_item_loc_clear <= '0';
+                        ig_item_loc_ok <= '0';
+
+                        br_new_head_clear <= '0';
+                        br_new_head_ok <= '0';
+
                         new_state <= COL_ITEM_ONE;    
                     end if;
                 else
                     -- This is kinda weird. Should not happen, so let's go back to our safehaven IDLE
 
+                    ig_item_loc_clear <= '0';
+                    ig_item_loc_ok <= '0';
+
+                    st_item_set <= '0';
+                    st_item_no <= '0';
+
+                    br_new_head_clear <= '0';
+                    br_new_head_ok <= '0';  
+
                     new_state <= IDLE;
                 end if;
-
-             when COL_ITEM_ONE =>
+--====================
+-- COLLISION ITEM ONE
+--====================
+            when COL_ITEM_ONE =>
                 --------------------
                 -- Initial values --
                 --------------------
-                ig_item_loc_clear <= '0';
-                ig_item_ok <= '0';
                 --
-                st_item_set <= '0';
                 st_item_no <= '0';
                 --
                 so_range_clear <= '0';
                 so_reset <= '0';
-                --
-                br_new_head_clear <= '0';
-                br_new_head_ok <= '0';
-                br_inverse_controls_set <= '0';
-                --
-                gr_flickering_set <= '0';
-                --
-                sp_increase_speed_set <= '0';
                 ----
 
 
                 -- Check for a collision with the first item (if available, which it should be)
-                st_item_set <= '1';
 
                 if (st_item_clear = '1') and (st_item_exists = '1') then
                     st_item_set <= '0';
@@ -177,6 +198,16 @@ begin
                         --     Collision with item one check  --
                         ----------------------------------------
 
+                        br_new_head_clear <= '0';
+                        br_new_head_ok <= '0';
+                        br_inverse_controls_set <= '0';
+
+                        sp_increase_speed_set <= '0';
+
+                        gr_flickering_set <= '0';
+
+                        food_collision <= '0';
+
                         if (st_item_loc = ig_item_loc) then
                             -- This location is already occupied
                             ig_item_loc_clear <= '1';
@@ -185,6 +216,8 @@ begin
                             new_state <= IDLE;
                         else
                             -- new_item passed this check
+                            ig_item_loc_clear <= '0';
+                            ig_item_ok <= '0';
 
                             new_state <= COL_ITEM_TWO;
                         end if;
@@ -195,11 +228,19 @@ begin
                         --     Collision with item one check --
                         ---------------------------------------
 
+                        ig_item_loc_clear <= '0';
+                        ig_item_ok <= '0';
+
                         if (st_item_loc = br_new_head_loc) then
                             if (st_item_type = "00") then
                                 -- FOOD COLLISION WHICH IS GOOD
                                 br_new_head_clear <= '1';
                                 br_new_head_ok <= '1';
+                                br_inverse_controls_set <= '0';
+
+                                gr_flickering_set <= '0';
+
+                                sp_increase_speed_set <= '0';
 
                                 --
                                 -- NOT SURE ABOUT THIS - START
@@ -219,12 +260,28 @@ begin
                                 -- signal submodule speed to increase its speed
                                 sp_increase_speed_set <= '1';
 
+                                br_new_head_clear <= '0';
+                                br_new_head_ok <= '0';
+                                br_inverse_controls_set <= '0';
+
+                                gr_flickering_set <= '0';
+
+                                food_collision <= '0';
+
                                 new_state <= WAIT_FOR_SPEED;
 
                             elsif (st_item_type = "10") then
                                 -- Power-up of type inverse controls
 
                                 br_inverse_controls_set <= '1';
+                                br_new_head_clear <= '0';
+                                br_new_head_ok <= '0';
+
+                                gr_flickering_set <= '0';
+
+                                sp_increase_speed_set <= '0';
+
+                                food_collision <= '0';
 
                                 new_state <= WAIT_FOR_BR;
 
@@ -232,49 +289,113 @@ begin
                                 -- Power-up of type flickering
 
                                 gr_flickering_set <= '1';
+
+                                br_inverse_controls_set <= '0';
+                                br_new_head_clear <= '0';
+                                br_new_head_ok <= '0';
+
+                                sp_increase_speed_set <= '0';
+
+                                food_collision <= '0';
                                 
                                 new_state <= WAIT_FOR_GR;
                             else
                                 -- Maybe some signals were not yet stable or whatever, let's try again
+
+                                br_inverse_controls_set <= '0';
+                                br_new_head_clear <= '0';
+                                br_new_head_ok <= '0';
+
+                                gr_flickering_set <= '0';
+
+                                sp_increase_speed_set <= '0';
+
+                                food_collision <= '0';
+
                                 new_state <= COL_ITEM_ONE;
                             end if;
                         else
                             -- new_head passed this check
+
+                            br_inverse_controls_set <= '0';
+                            br_new_head_clear <= '0';
+                            br_new_head_ok <= '0';
+
+                            gr_flickering_set <= '0';
+
+                            sp_increase_speed_set <= '0';
+                            food_collision <= '0';
+
                             new_state <= COL_ITEM_TWO;
                         end if;
                     else
                         -- ehm, we should not be here. We can either:
                         --  1. panick and go back to IDLE
                         --  2. chill back and relax and stay in COL_ITEM_ONE
+                        ig_item_loc_clear <= '1';
+                        ig_item_loc_ok <= '0';
+
+                        br_new_head_clear <= '0';
+                        br_new_head_ok <= '0';
+                        br_inverse_controls_set <= '0';
+
+                        gr_flickering_set <= '0';
+
+                        sp_increase_speed_set <= '0';
+
+                        food_collision <= '0';
 
                         -- PANICK
                         new_state <= IDLE;
                     end if;
                 elsif (st_item_clear = '1') and (st_item_exists = '0') then
                     st_item_set <= '0';
+
+                    ig_item_loc_clear <= '0';
+                    ig_item_loc_ok <= '0';
+
+                    br_new_head_clear <= '0';
+                    br_new_head_ok <= '0';
+                    br_inverse_controls_set <= '0';
+
+                    gr_flickering_set <= '0';
+
+                    sp_increase_speed_set <= '0';
+
+                    food_collision <= '0';
                     
                     -- skip this item because it does not exist (what is actually weird, as there should always be one food item in the field)
                     new_state <= COL_ITEM_TWO;
                 else 
+                    st_item_set <= '1';
+                    ig_item_loc_clear <= '0';
+                    ig_item_loc_ok <= '0';
+
+                    br_new_head_clear <= '0';
+                    br_new_head_ok <= '0';
+                    br_inverse_controls_set <= '0';
+
+                    gr_flickering_set <= '0';
+
+                    sp_increase_speed_set <= '0';
+
+                    food_collision <= '0';
+
                     new_state <= COL_ITEM_ONE;
                 end if;
-
+--====================
+-- COLLISION ITEM TWO
+--====================
             when COL_ITEM_TWO =>
                 --------------------
                 -- Initial values --
                 --------------------
-                ig_item_loc_clear <= '0';
                 ig_item_ok <= '0';
                 --
-                st_item_set <= '0';
                 st_item_no <= '0';
                 --
                 so_range_clear <= '0';
                 so_reset <= '0';
-                --
-                br_new_head_clear <= '0';
-                br_new_head_ok <= '0';
-                br_inverse_controls_set <= '0';
                 --
                 gr_flickering_set <= '0';
                 --
@@ -282,7 +403,6 @@ begin
                 ----
 
                 -- Check for a collision with the second item 
-                st_item_set <= '1';
 
                 if (st_item_clear = '1') and (st_item_exists = '1') then
                     st_item_set <= '0';
@@ -294,14 +414,19 @@ begin
                         --     Collision with item two check  --
                         ----------------------------------------
 
+                        br_new_head_clear <= '0';
+                        br_new_head_ok <= '0';
+                        br_inverse_controls_set <= '0';
+
                         if (st_item_loc = ig_item_loc) then
                             -- This location is already occupied
                             ig_item_loc_clear <= '1';
-                            ig_item_ok <= '0';
 
                             new_state <= IDLE;
                          else
                             -- new_item passed this check
+
+                            ig_item_loc_clear <= '0';
                             new_state <= COL_SNAKE;
                          end if;
                     elsif (br_new_head_set = '1') then
@@ -311,26 +436,24 @@ begin
                         --     Collision with item two check --
                         ---------------------------------------
 
+                        ig_item_loc_clear <= '0';
+
                         if (st_item_loc = br_new_head_loc) then
+                            br_new_head_clear <= '1';
+                            br_new_head_ok <= '0';
+
                             if (st_item_type = "00") then
                                 -- FOOD COLLISION WHICH IS GOOD
-                                br_new_head_clear <= '1';
-                                br_new_head_ok <= '1';
-
-                                --
-                                -- NOT SURE ABOUT THIS - START
-                                ------------------------------
+                                br_inverse_controls_set <= '0';
 
                                 food_collision <= '1'; -- Does only need to be high for one clock period
-                                
-                                ------------------------------
-                                -- NOT SURE ABOUT THIS - END
-                                --
 
                                 new_state <= IDLE;
 
                             elsif (st_item_type = "01") then
                                 -- Power up of type speed increase
+
+                                br_inverse_controls_set <= '0';
 
                                 -- signal submodule speed to increase its speed
                                 sp_increase_speed_set <= '1';
@@ -348,14 +471,22 @@ begin
                                 -- Power-up of type flickering
 
                                 gr_flickering_set <= '1';
+
+                                br_inverse_controls_set <= '0';
                                 
                                 new_state <= WAIT_FOR_GR;
                             else
                                 -- Maybe some signals were not yet stable or whatever, let's try again
+
+                                br_inverse_controls_set <= '0';
+                                
                                 new_state <= COL_ITEM_TWO;
                             end if;
                         else
                             -- new_head passed this check
+                            br_new_head_clear <= '0';
+                            br_new_head_ok <= '0';
+
                             new_state <= COL_SNAKE;
                         end if;
                     else
@@ -363,8 +494,12 @@ begin
                         --  1. panick and go back to IDLE
                         --  2. chill back and relax and stay in COL_ITEM_ONE
 
-                        -- PANICK
-                        new_state <= IDLE;
+                        -- Hopefully there is only a little delay somewhere
+                        br_new_head_clear <= '0';
+                        br_new_head_ok <= '0';
+                        br_invert_controls <= '0';
+
+                        new_state <= COL_ITEM_TWO;
                     end if;
                 elsif (st_item_clear = '1') and (st_item_exists = '0') then
                     st_item_set <= '0';
@@ -372,9 +507,12 @@ begin
                     -- skip this item because it does not exist (what is actually weird, as there should always be one food item in the field)
                     new_state <= COL_SNAKE;
                 else 
+                    st_item_set <= '1';
                     new_state <= COL_ITEM_TWO;
                 end if;
-
+--====================
+-- COLLISION SNAKE
+--====================
             when COL_SNAKE =>
                 --------------------
                 -- Initial values --
@@ -693,7 +831,9 @@ begin
                 else
                     new_state <= COL_SNAKE;
                 end if;
-
+--====================
+-- DO NOT GO FURTHER
+--====================
             when WAIT_FOR_SPEED =>
                 -- Wait for speed
                 if (sp_increase_speed_clear = '1') then
