@@ -28,6 +28,8 @@ entity snake_struct is
         st_item_no     : out std_logic;
         so_range_clear : out std_logic;
         so_reset       : out std_logic;
-        new_head       : out std_logic_vector(11 downto 0));
+        new_head       : out std_logic_vector(11 downto 0);
+	gr_flickering_clear	: in std_logic;
+	gr_flickering_set		 : out std_logic);
 end snake_struct;
 
