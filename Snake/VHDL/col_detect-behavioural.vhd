@@ -12,7 +12,7 @@ use IEEE.std_logic_arith.ALL;
 use IEEE.std_logic_unsigned.ALL;
 
 architecture behaviour of col_detect is
-    type col_detect_state is (IDLE, CHECK_COL_WALL, COL_IG, COL_BR, COL_FOOD, CHECK_COL_ITEM_ONE_REQ, CHECK_COL_ITEM_ONE, CHECK_COL_ITEM_TWO_REQ, CHECK_COL_ITEM_TWO, CHECK_COL_SNAKE, REQ_NEW_PART, PU_SPEED, PU_INV_CONTROLS, PU_FLICK, WAIT_FOR_ITEM_GEN, WAIT_FOR_GRAPHICS);
+    type col_detect_state is (IDLE, CHECK_COL_WALL, COL_IG, COL_BR, COL_FOOD, CHECK_COL_ITEM_ONE_REQ, CHECK_COL_ITEM_ONE, CHECK_COL_ITEM_TWO_REQ, CHECK_COL_ITEM_TWO, CHECK_COL_SNAKE, REQ_NEW_PART, PU_SPEED, PU_INV_CONTROLS, PU_FLICK, WAIT_FOR_ITEMGEN, WAIT_FOR_GRAPHICS, RESULT_SUCCES, RESULT_COLLISION);
     signal state, new_state: col_detect_state;
     type col_detect_inter_t is (UNDEFINED, ITEMGEN, BUTTONREACT);
     signal inter_s, new_inter_s: col_detect_inter_t;
@@ -35,7 +35,7 @@ begin
         end if;
     end process;
 
-    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, st_item_clear, st_item_exists, st_item_type, st_item_loc, x_range, y_range, so_range_set, tail, br_new_head_set, br_new_head_loc, br_inverse_controls_clear, gr_flickering_clear, sp_increase_speed_clear)
+    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_clear, st_item_exists, st_item_type, st_item_loc, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, gr_flickering_clear)
     begin
         case state is
 --======================================================================
@@ -201,7 +201,7 @@ begin
 --======================================================================
 --==========                COL_FOOD                ====================
 --======================================================================
-            when COL_BR =>
+            when COL_FOOD =>
                 --------------------
                 -- SIGNAL VALUES
                 --------------------
@@ -318,7 +318,7 @@ begin
                             if (st_item_type = "00") then
                                 -- Food item
                                 new_state <= COL_FOOD;
-                            if (st_item_type = "01") then
+                            elsif (st_item_type = "01") then
                                 -- Power-up of type Speed Increase
                                 new_state <= PU_SPEED;
                             elsif (st_item_type = "10") then
@@ -330,36 +330,12 @@ begin
                             end if;
                         else
                             -- Check for a collision with the snake's body
-                            new_state <= CHECK_COL_SNAKE_REQ;
+                            new_state <= CHECK_COL_SNAKE;
                         end if;
                     end if;
                 else
-                    -- No second item in the field
-                    new_state <= CHECK_COL_SNAKE_RES;
-                end if;
-
-
-                if (st_item_exists = '1') then
-                    if (inter_s = ITEMGEN) then
-                        if (st_item_loc = ig_item_loc) then
-                            -- Location is not free
-                            new_state <= COL_IG;
-                        else
-                            -- Check for a collision with the second item
-                            new_state <= CHECK_COL_ITEM_TWO_REQ;
-                        end if;
-                    --elsif (inter_s = BUTTONREACT) then
-                    else
-                        -- inter_s = probably BUTTONREACT
-                        if (st_item_loc = br_new_head_loc) then
-                            -- Collision with food
-                            -- Let ItemGenerator generate a new food item
-                            new_state <= COL_FOOD;
-                        else
-                            -- Check for a collision with the second item
-                            new_state <= CHECK_COL_ITEM_TWO_REQ;
-                        end if;
-                    end if;
+                    -- No first item in the field
+                    new_state <= CHECK_COL_ITEM_TWO_REQ;
                 end if;
 
 --======================================================================
@@ -449,7 +425,7 @@ begin
                             if (st_item_type = "00") then
                                 -- Food item
                                 new_state <= COL_FOOD;
-                            if (st_item_type = "01") then
+                            elsif (st_item_type = "01") then
                                 -- Power-up of type Speed Increase
                                 new_state <= PU_SPEED;
                             elsif (st_item_type = "10") then
@@ -466,7 +442,7 @@ begin
                     end if;
                 else
                     -- No second item in the field
-                    new_state <= CHECK_COL_SNAKE_RES;
+                    new_state <= CHECK_COL_SNAKE;
                 end if;
 
 --======================================================================
@@ -527,7 +503,7 @@ begin
                                 -- No collision.
                                 if (so_tail = '1') then
                                     -- Snake Collision check successfull
-                                    new_state <= CHECK_SUCCES;
+                                    new_state <= RESULT_SUCCES;
                                 else
                                     -- Request new part of the snake
                                     new_state <= REQ_NEW_PART;
@@ -535,9 +511,9 @@ begin
                             end if;
                         else
                             -- BUTTONREACT
-                            if (br_item_loc(4 downto 0) = x_range(4 downto 0)) then
+                            if (br_new_head_loc(4 downto 0) = x_range(4 downto 0)) then
                                 -- Possible collision
-                                if (br_item_loc(9 downto 5) < y_range(4 downto 0)) or (br_item_loc(9 downto 5) > y_range(9 downto 5)) then
+                                if (br_new_head_loc(9 downto 5) < y_range(4 downto 0)) or (br_new_head_loc(9 downto 5) > y_range(9 downto 5)) then
                                     -- No collision
                                     if (so_tail = '1') then
                                         -- Snake Collision Check succesfull.
@@ -554,7 +530,7 @@ begin
                                 -- No collision.
                                 if (so_tail = '1') then
                                     -- Snake Collision check successfull
-                                    new_state <= CHECK_SUCCES;
+                                    new_state <= RESULT_SUCCES;
                                 else
                                     -- Request new part of the snake
                                     new_state <= REQ_NEW_PART;
@@ -587,9 +563,9 @@ begin
                             end if;
                         else 
                             -- BUTTONREACT
-                            if (br_item_loc(9 downto 5) = y_range(4 downto 0)) then
+                            if (br_new_head_loc(9 downto 5) = y_range(4 downto 0)) then
                                 -- Possible collision
-                                if (br_item_loc(4 downto 0) < x_range(4 downto 0)) or (br_item_loc(4 downto 0) > x_range(9 downto 0)) then
+                                if (br_new_head_loc(4 downto 0) < x_range(4 downto 0)) or (br_new_head_loc(4 downto 0) > x_range(9 downto 0)) then
                                     -- No collision
                                     if (so_tail = '1') then
                                         new_state <= RESULT_SUCCES;
@@ -826,4 +802,74 @@ begin
                 else
                     new_state <= WAIT_FOR_GRAPHICS;
                 end if;
+
+--======================================================================
+--==========                RESULT_SUCCES           ====================
+--======================================================================
+            when RESULT_SUCCES =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                br_new_head_clear       <= '1';
+                br_new_head_ok          <= '1';
+                br_inverse_controls_set <= '0';
+                --
+                food_collision          <= '0';
+                --
+                gr_flickering_set       <= '0';
+                --
+                ig_item_loc_clear       <= '0';
+                ig_item_ok              <= '0';
+                ig_item_set             <= '0';
+                ig_item_type            <= '0';
+                --
+                so_range_clear          <= '0';
+                --
+                sp_increase_speed_set   <= '0';
+                --
+                st_item_req             <= '0';
+                st_item_no              <= '0';
+                ----
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                new_state <= IDLE;
+
+--======================================================================
+--==========                RESULT_COLLISION        ====================
+--======================================================================
+            when RESULT_COLLISION =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                br_new_head_clear       <= '1';
+                br_new_head_ok          <= '0';
+                br_inverse_controls_set <= '0';
+                --
+                food_collision          <= '0';
+                --
+                gr_flickering_set       <= '0';
+                --
+                ig_item_loc_clear       <= '0';
+                ig_item_ok              <= '0';
+                ig_item_set             <= '0';
+                ig_item_type            <= '0';
+                --
+                so_range_clear          <= '0';
+                --
+                sp_increase_speed_set   <= '0';
+                --
+                st_item_req             <= '0';
+                st_item_no              <= '0';
+                ----
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                new_state <= IDLE;
+        end case;
     end process;
+end behaviour;
