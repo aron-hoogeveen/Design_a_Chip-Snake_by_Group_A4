@@ -100,7 +100,7 @@ case state is
 		flag_chc <= '0';
 		tail_out <= tail_out;
 
-		if corner1 (9 downto 5) > corner2 (9 downto 5) then
+		if corner1 (9 downto 5) < corner2 (9 downto 5) then
 			next_state <= x1_x2;
 		else
 			next_state <= x2_x1;
@@ -137,7 +137,7 @@ case state is
 		flag_chc <= '0';
 		tail_out <= tail_out;
 
-		if corner1 (4 downto 0) > corner2 (4 downto 0) then
+		if corner1 (4 downto 0) < corner2 (4 downto 0) then
 			next_state <= y1_y2;
 		else
 			next_state <= y2_y1;
