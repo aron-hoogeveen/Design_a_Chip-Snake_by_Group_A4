@@ -29,7 +29,7 @@ architecture behaviour of itemgenerator is
         port (clk, reset : in std_logic; z : out std_logic);
     end component;
 
-    type itemGenerator_state is (IDLE, START_TIMER, SHIFT_FOOD_ONE, SHIFT_FOOD_TWO, GEN_LOC, GEN_LOC_ZERO, CHECK_LOC, SHIFT_REG_ONE, SHIFT_REG_TWO, SEND_LOC);
+    type itemGenerator_state is (IDLE, START_TIMER, SHIFT_FOOD_ONE, SHIFT_FOOD_TWO, GEN_LOC, GEN_LOC_ZERO, CHECK_LOC, SHIFT_REG_ONE, SHIFT_REG_TWO, SEND_LOC, GEN_PU, GEN_PU_ZERO, GEN_PU_RNG);
     signal state, new_state: itemGenerator_state;
     signal counter_out: std_logic_vector(3 downto 0);
     signal counter_enable, counter_reset, register_enable, register_D: std_logic;
@@ -94,6 +94,7 @@ begin
                     new_state <= START_TIMER;
                 elsif (snake_item_set = '0') and (countfps_done = '1') then
                     -- Generate a power-up
+                    new_state <= GEN_PU;
                 else
                     new_state <= IDLE;
                 end if;
@@ -126,6 +127,97 @@ begin
                 -- LOGIC
                 --------------------
                 new_state <= IDLE;
+
+--======================================================================
+--==========                     GEN_PU                       ==========
+--======================================================================
+            when GEN_PU =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                snake_item_clear                <= '0';
+                snake_item_loc_set              <= '0';
+                snake_item_loc                  <= (others => '0');
+                --
+                storage_item_set                <= '0';
+                storage_item_loc                <= (others => '0');
+                --
+                counter_reset                   <= '0';
+                counter_enable                  <= '0';
+                --
+                register_enable                 <= '1';
+                register_D                      <= rng_out;
+                --
+                countfps_start                  <= '0';
+                --
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                if (rng_out = '0') then
+                    new_state <= GEN_PU_ZERO;
+                else 
+                    new_state <= GEN_PU_RNG;
+                end if;
+
+--======================================================================
+--==========                     GEN_PU_RNG                   ==========
+--======================================================================
+            when GEN_PU_RNG =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                snake_item_clear                <= '0';
+                snake_item_loc_set              <= '0';
+                snake_item_loc                  <= (others => '0');
+                --
+                storage_item_set                <= '0';
+                storage_item_loc                <= (others => '0');
+                --
+                counter_reset                   <= '0';
+                counter_enable                  <= '0';
+                --
+                register_enable                 <= '1';             
+                register_D                      <= rng_out;
+                --
+                countfps_start                  <= '0';
+                --
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                new_state <= GEN_LOC;
+
+--======================================================================
+--==========                     GEN_PU_ZERO                  ==========
+--======================================================================
+            when GEN_PU_ZERO =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                snake_item_clear                <= '0';
+                snake_item_loc_set              <= '0';
+                snake_item_loc                  <= (others => '0');
+                --
+                storage_item_set                <= '0';
+                storage_item_loc                <= (others => '0');
+                --
+                counter_reset                   <= '0';
+                counter_enable                  <= '0';
+                --
+                register_enable                 <= '1';                 -- Enable register  
+                register_D                      <= '0';                   -- D = '0'
+                --
+                countfps_start                  <= '0';
+                --
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                new_state <= GEN_LOC;
 
 --======================================================================
 --==========                   SHIFT_FOOD_ONE                 ==========
@@ -259,7 +351,7 @@ begin
                 -- LOGIC
                 --------------------
 
-                if (counter_out = "1000") then
+                if (counter_out = "0111") then
                     -- Generate the second last bit. 
                     if (register_Q(11) = '1') then
                         -- Make the last bit '0', otherwise y will go out of bound
@@ -267,7 +359,7 @@ begin
                     else
                         new_state <= GEN_LOC;
                     end if;
-                elsif (counter_out = "1001") then 
+                elsif (counter_out = "1000") then
                     -- Ten bits have been generated.
                     -- Check the generated location
                     new_state <= CHECK_LOC;
