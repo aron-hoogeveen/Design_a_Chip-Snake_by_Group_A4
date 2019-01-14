@@ -30,7 +30,7 @@ begin
 			end if;
 
 		when check =>
-			buttons <= "01";
+			buttons <= "00";
 			
 			if buffed_input = "1000" then
 				next_state <= right;
