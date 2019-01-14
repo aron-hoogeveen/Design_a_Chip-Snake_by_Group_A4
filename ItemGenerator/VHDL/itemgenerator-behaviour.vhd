@@ -56,7 +56,7 @@ begin
         end if;
     end process;
 
-    lbl_itemgen_state: process (snake_item_set, snake_req_item, snake_item_loc_clear, snake_item_ok, storage_item_clear, countfps_done, counter_out)
+    lbl_itemgen_state: process (state, snake_item_set, snake_req_item, snake_item_loc_clear, snake_item_ok, storage_item_clear, countfps_done, counter_out)
     begin
         case state is
 --======================================================================
@@ -172,7 +172,7 @@ begin
                 storage_item_loc                <= (others => '0');
                 --
                 counter_reset                   <= '0';             
-                counter_enable                  <= '0';
+                counter_enable                  <= '1';             -- Let the counter start counting for the gen loc state
                 --
                 register_enable                 <= '1';             -- Shift D into register
                 register_D                      <= '0';             -- D = '0'
@@ -185,6 +185,51 @@ begin
                 -- LOGIC
                 --------------------
                 new_state <= GEN_LOC;
+
+--======================================================================
+--==========                    ENABLE_COUNTER                ==========
+--======================================================================
+--            when ENABLE_COUNTER =>
+--                --------------------
+--                -- SIGNAL VALUES
+--                --------------------
+--                snake_item_clear                <= '0';
+--                snake_item_loc_set              <= '0';
+--                snake_item_loc                  <= (others => '0');
+--                --
+--                storage_item_set                <= '0';
+--                storage_item_loc                <= (others => '0');
+--                --
+--                counter_reset                   <= '0';
+--                counter_enable                  <= '1';             -- Start counting (amount of item bits)
+--                --
+--                register_enable                 <= '1';             -- Add D to shift register
+--                register_D                      <= rng_out;         -- D = rng_out
+--                --
+--                countfps_start                  <= '0';
+--                --
+--
+--
+--                --------------------
+--                -- LOGIC
+--                --------------------
+--
+--                if (counter_out = "1000") then
+--                    -- Generate the second last bit. 
+--                    if (register_Q(11) = '1') then
+--                        -- Make the last bit '0', otherwise y will go out of bound
+--                        new_state <= GEN_LOC_ZERO;
+--                    else
+--                        new_state <= GEN_LOC;
+--                    end if;
+--                elsif (counter_out = "1001") then 
+--                    -- Ten bits have been generated.
+--                    -- Check the generated location
+--                    new_state <= CHECK_LOC;
+--                else
+--                    -- Add another bit to the shift register
+--                    new_state <= GEN_LOC;
+--                end if;
 
 --======================================================================
 --==========                    GEN_LOC                       ==========

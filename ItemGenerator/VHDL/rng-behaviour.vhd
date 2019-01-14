@@ -22,7 +22,11 @@ begin
     process (clk) 
     begin
 	if(rising_edge(clk)) then
-		s1 <= s0;
+		if(reset = '1') then
+			s1 <= s0;
+		else
+			s1 <= s0;			
+		end if;
 	end if;
     end process;
 
