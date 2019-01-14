@@ -21,13 +21,11 @@ test: counter4 port map (clk, reset, manual_reset, enable, z_out);
   reset <= '1' after 0 ns,
            '0' after 100 ns;
   manual_reset <= '0' after 0 ns,
-                  '1' after 160 ns,
-                  '0' after 240 ns,
                   '1' after 1280 ns,
                   '0' after 1360 ns;
   enable <= '0' after 0 ns,
             '1' after 160 ns,
             '0' after 1120 ns,
-            '1' after 1280 ns,
+            '1' after 1360 ns,
             '0' after 1600 ns;
 end behaviour;
