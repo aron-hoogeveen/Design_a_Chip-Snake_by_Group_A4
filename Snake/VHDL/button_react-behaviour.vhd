@@ -4,7 +4,7 @@ use IEEE.numeric_std.all;
 
 architecture behaviour of button_react is
 
-type button_react_state is (idle, set_flags, waitHead, waitCor, sendChc, waitMove);
+type button_react_state is (idle, set_flags, waitHead, waitCor, sendChc, waitMove, gameOver);
 signal state, next_state: button_react_state;
 signal ytoInt, xtoInt: unsigned(4 downto 0);
 signal corner_exists : std_logic;
@@ -117,7 +117,7 @@ case state is
 			if(head_ok = '1') then
 				next_state <= set_flags;
 			else
-				next_state <= waitMove;
+				next_state <= gameOver;
 			end if;
 		else
 			next_state <= sendChc;
@@ -170,6 +170,12 @@ case state is
 		else
 			next_state <= waitMove;
 		end if;
+
+	when gameOver =>
+
+		corner_flag <= '0';
+		new_head_flag <= '0';
+		chc_flag <= '0';
 		
 	when others =>
 		corner_flag <= '0';
