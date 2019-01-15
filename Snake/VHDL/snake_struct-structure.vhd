@@ -21,6 +21,8 @@ component col_detect is
         br_inverse_controls_set : out std_logic;
 
         food_collision          : out std_logic;
+        new_tail_food           : out std_logic;
+        new_tail_food_clear     : in std_logic;
 
         gr_flickering_set       : out std_logic;
 
@@ -85,7 +87,7 @@ signal clr_head_sig : std_logic;
 signal head_ok_sig : std_logic;	
 signal food	: std_logic;
 signal inversion_sig : std_logic;
-signal buttons : std_logic_vector(1 downto 0);
+signal buttons_s : std_logic_vector(1 downto 0);
 signal buffed_input : std_logic_vector(3 downto 0);
 signal button_input : std_logic_vector(3 downto 0);
 
@@ -125,6 +127,8 @@ comp_col_detect: col_detect
        		 br_inverse_controls_set => inversion_sig,
 
        		 food_collision         => food,
+           new_tail_food          => new_tail_food,
+           new_tail_food_clear    => new_tail_food_clear,
 
 		       gr_flickering_set			=> gr_flickering_set);
 
@@ -133,7 +137,7 @@ comp_button_react: button_react
 		 reset			=> reset,
 		 head     			=> head,	
 		 move			=> move_speed,	
-		 buttons			=> buttons,
+		 buttons			=> buttons_s,
 		 new_head_clr_flag			=> newh_clr_flag,			
 		 corner_clr_flag			=> crn_clr_flag,				
 		 chc_clr_flag			=> clr_head_sig,	
@@ -149,12 +153,12 @@ comp_processed_in: processed_in
 	port map(clk => clk,
         reset => reset,
         buffed_input => buffed_input,
-        buttons => buttons);
+        buttons => buttons_s);
 		
 comp_input_buffer: input_buffer
 	port map(clk => clk,
         reset => reset,
-        direct_input => button_input;
+        direct_input => button_input,
 	input_buf => buffed_input);
 
 new_head <= sig_new_head;		--signal tap to output
