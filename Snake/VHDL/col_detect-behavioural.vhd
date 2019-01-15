@@ -123,8 +123,54 @@ begin
                         -- Check for a collision with item one
                         new_state <= CHECK_COL_ITEM_ONE;
                     end if;
+                elsif (ig_item_loc_set = '1') and (br_new_head_set = '1') then
+                    -- Prefer the check for new_head
+
+                    new_inter_s <= BUTTONREACT;
+
+                    if (br_new_head_loc(4 downto 0) = "00000") or (br_new_head_loc(4 downto 0) = "11111") or (br_new_head_loc(9 downto 5) = "00000") or (br_new_head_loc(9 downto 5) = "11000") then
+                        -- Collision with wall
+                        new_state <= COL_BR;
+                    else
+                        -- Check for a collision with item one
+                        new_state <= CHECK_COL_ITEM_ONE;
+                    end if;
+                else
+                    -- The communication went wrong. Let's go back to IDLE. Assume that if we had to check a new_head, it was ok. Otherwise the game will be game-over
+                    -- For itemgenerator just signal that the generator was not ok
+
+                    new_state <= ERROR_FALL_BACK;
                 end if;
 
+--======================================================================
+--==========                 ERROR_FALL_BACK        ====================
+--======================================================================
+            when ERROR_FALL_BACK =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                br_new_head_clear       <= '1';         -- 
+                br_new_head_ok          <= '1';         -- Assume the new_head is ok
+                br_inverse_controls_set <= '0';
+                --
+                food_collision          <= '0';
+                --
+                gr_flickering_set       <= '0';
+                --
+                ig_item_loc_clear       <= '1';         -- 
+                ig_item_ok              <= '0';         -- Let Itemgen generate another location
+                ig_item_set             <= '0';
+                ig_item_type            <= '0';
+                --
+                so_range_clear          <= '0';
+                --
+                sp_increase_speed_set   <= '0';
+                --
+
+                --------------------
+                -- LOGIC
+                --------------------
+                new_state <= IDLE;
 
 --======================================================================
 --==========                COL_IG                  ====================
