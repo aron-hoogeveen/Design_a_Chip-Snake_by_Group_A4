@@ -62,6 +62,21 @@ port(		clk			: in std_logic;
 		new_head_flag			: out std_logic;					
 		chc_flag			: out std_logic);				
 end component;
+
+component processed_in is
+port(clk          : in  std_logic;
+        reset        : in  std_logic;
+        buffed_input : in  std_logic_vector(3 downto 0);
+        buttons      : out std_logic_vector(1 downto 0));
+end component;
+
+component input_buffer is
+   port(clk     : in  std_logic;
+        reset   : in  std_logic;
+        direct_input   : in  std_logic_vector(3 downto 0);
+	input_buf	: out std_logic_vector(3 downto 0));
+end component;
+
 signal sig_new_head : std_logic_vector(11 downto 0);
 signal new_head_temp : std_logic_vector(9 downto 0); 				--signal to give loc to col_det, from BR
 signal sig_head_flag	:	std_logic;
@@ -70,6 +85,9 @@ signal clr_head_sig : std_logic;
 signal head_ok_sig : std_logic;	
 signal food	: std_logic;
 signal inversion_sig : std_logic;
+signal buttons : std_logic_vector(1 downto 0);
+signal buffed_input : std_logic_vector(3 downto 0);
+signal button_input : std_logic_vector(3 downto 0);
 
 begin
 comp_speed: speed
@@ -126,9 +144,20 @@ comp_button_react: button_react
 		 corner_flag			=> corner_flag,			
 		 new_head_flag			=> new_head_flag,				
 		 chc_flag			=> sig_head_flag);
+		 
+comp_processed_in: processed_in
+	port map(clk => clk,
+        reset => reset,
+        buffed_input => buffed_input,
+        buttons => buttons);
+		
+comp_input_buffer: input_buffer
+	port map(clk => clk,
+        reset => reset,
+        direct_input => button_input;
+	input_buf => buffed_input);
 
 new_head <= sig_new_head;		--signal tap to output
 new_head_temp <= new_head(11 downto 2);	--signal to col_detect
 move_out <= move_speed;
 end structure;
-
