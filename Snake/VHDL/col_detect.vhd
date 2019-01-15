@@ -35,6 +35,8 @@ entity col_detect is
         sp_increase_speed_set   : out std_logic;
         
         st_item_one             : in std_logic_vector(11 downto 0);
-        st_item_two             : in std_logic_vector(11 downto 0));
+        st_item_two             : in std_logic_vector(11 downto 0);
+        st_powerup_set          : out std_logic;
+        st_powerup_clear        : in std_logic);
 end col_detect;
 
