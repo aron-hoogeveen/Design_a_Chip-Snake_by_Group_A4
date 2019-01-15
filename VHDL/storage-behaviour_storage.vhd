@@ -21,7 +21,6 @@ architecture behaviour_storage_test of storage is
 					clear_corner_state,
 					replace_food,
 					replace_power_up,
-					remove_food,
 					remove_power_up,
 					new_item_clear_state,
 					remove_item_clear_state,
@@ -139,16 +138,16 @@ process (clk, reset)
 		end if;
 end process;
 
-process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corner_flag, remove_item_type, remove_item_set, new_head, new_corner, new_tail, new_item, state, S_S(0), S_S(1), S_S(2), S_S(3), S_S(4), S_S(5), S_S(6), S_S(7), S_S(8), S_S(9), S_S(10), S_S(11), S_S(12), S_S(13), S_S(14), S_S(15), S_S(16), S_S(17), S_S(18), S_S(19), S_S(20), S_S(21), S_S(22), S_S(23), S_S(24), corner_check, tail_check, N, corner_count, H_S, I_S(1), I_S(0), send_tail, T)
+process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corner_flag, remove_power_up_flag, new_head, new_corner, new_tail, new_item, state, S_S(0), S_S(1), S_S(2), S_S(3), S_S(4), S_S(5), S_S(6), S_S(7), S_S(8), S_S(9), S_S(10), S_S(11), S_S(12), S_S(13), S_S(14), S_S(15), S_S(16), S_S(17), S_S(18), S_S(19), S_S(20), S_S(21), S_S(22), S_S(23), S_S(24), corner_check, tail_check, N, corner_count, H_S, I_S(1), I_S(0), send_tail, T)
 	begin
 		case state is
 			when reset_state =>
 				new_H_S 	<= "100100110001";
 				new_I_S0 	<= "000000000000";
 				new_I_S1 	<= "000000000000";
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				snake_list <= "00000000000000000";
 				item_out_food <= I_S(0);
@@ -157,7 +156,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_n				<= "00001";
@@ -199,9 +198,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				new_state <= idle;
 
 			when idle =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -212,7 +211,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -267,9 +266,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 					new_state <= replace_food;
 				elsif (new_item_set = '1' AND new_item(1 downto 0) /= "00") then
 					new_state <= replace_power_up;
-				elsif (new_item_set = '0' AND remove_item_set = '1' AND remove_item_type = '0') then
-					new_state <= remove_food;
-				elsif (new_item_set = '0' AND remove_item_set = '1' AND remove_item_type = '1') then
+				elsif (new_item_set = '0' AND remove_power_up_flag = '1') then
 					new_state <= remove_power_up;
 				elsif	(send_corner_flag = '1') then
 					new_state <= tail_check1;
@@ -277,9 +274,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 					new_state <= idle;
 				end if;
 			when replace_head =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				new_H_S <= new_head;
 				head <= H_S;
 				snake_list <= "00000000000000000";
@@ -290,7 +287,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -334,9 +331,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				new_state <= clear_head_state;
 
 			when clear_head_state =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -347,7 +344,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '1';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -391,9 +388,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 			when corner_counter_up =>
 				new_corner_count <= std_logic_vector( unsigned(corner_count) + 1 );
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -404,7 +401,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_n				<= n;
@@ -451,9 +448,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 			when add_new_corner =>
 				new_S_S0 <= new_corner;
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -464,7 +461,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -505,9 +502,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				new_state <= clear_corner_state;
 
 			when clear_corner_state =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -518,7 +515,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '1'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -564,9 +561,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 								
 			when replace_food =>
 				new_I_S0 <= new_item;
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_s;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -576,7 +573,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -620,9 +617,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 			when replace_power_up =>
 				new_I_S1 <= new_item;
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -632,7 +629,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -675,70 +672,13 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 				new_state <= new_item_clear_state;
 
-			when remove_food =>
-				new_I_S0 <= "000000000000";
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
-				head <= H_S;
-				new_H_s	<= H_s;
-				snake_list <= "00000000000000000";
-				item_out_food <= "000000000000";
-				item_out_power_up <= I_S(1);
-				new_I_S1 <= I_S(1);
-				clear_head_flag 				<= '0';	
-				clear_corner_flag				<= '0'; 		
-				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
-				new_item_clear				<= '0';
-				send_new_corner_clear				<= '0';
-				new_corner_count				<= corner_count;
-				new_n				<= n;
-				new_send_tail				<= '0';
-				new_tail_check				<= "000000";
-				new_corner_check				<= "000000";
-				new_T				<= T;
-				new_tail_input				<= (others => '0');
 
-
-				
-				new_S_S0				<= S_S(0);
-				new_S_S1				<= S_S(1);
-				new_S_S2				<= S_S(2);
-				new_S_S3				<= S_S(3);
-				new_S_S4				<= S_S(4);
-				new_S_S5				<= S_S(5);
-				new_S_S6				<= S_S(6);
-				new_S_S7				<= S_S(7);
-				new_S_S8				<= S_S(8);
-				new_S_S9				<= S_S(9);
-				new_S_S10				<= S_S(10);
-				new_S_S11				<= S_S(11);
-				new_S_S12				<= S_S(12);
-				new_S_S13				<= S_S(13);
-				new_S_S14				<= S_S(14);
-				new_S_S15				<= S_S(15);
-				new_S_S16				<= S_S(16);
-				new_S_S17				<= S_S(17);
-				new_S_S18				<= S_S(18);
-				new_S_S19				<= S_S(19);
-				new_S_S20				<= S_S(20);
-				new_S_S21				<= S_S(21);
-				new_S_S22				<= S_S(22);
-				new_S_S23				<= S_S(23);
-				new_S_S24				<= S_S(24);
-		
-
-						
-
-
-				new_state <= remove_item_clear_state;
 
 			when remove_power_up =>
 				new_I_S1 <= "000000000000";
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -748,7 +688,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -791,9 +731,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				new_state <= remove_item_clear_state;
 
 			when new_item_clear_state =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -804,7 +744,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '1';	
+				remove_power_up_clear	 			<= '1';	
 				new_item_clear				<= '1';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -849,9 +789,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				new_state <= idle;
 
 			when remove_item_clear_state =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -862,8 +802,8 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '1';	
-				new_item_clear				<= '1';
+				remove_power_up_clear	 			<= '1';	
+				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
 				new_n				<= n;
@@ -909,9 +849,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 
 			when load_tail =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -922,7 +862,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -965,9 +905,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				new_state				<= check_tail;
 
 			when check_tail =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -978,7 +918,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -1048,9 +988,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 			
 			when replace_tail =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -1062,7 +1002,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -1758,9 +1698,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 			when remove_tail =>
 				new_corner_count <= std_logic_vector( unsigned(corner_count) -1 );
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -1771,7 +1711,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_n				<= n;
@@ -2464,9 +2404,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 
 			when clear_tail_state =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -2477,7 +2417,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '1';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
@@ -2521,9 +2461,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				new_state <= idle;
 
 	    when tail_check1 =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '0';
-                item_send_flag <= '0';
+                
+                
+                
                 head <= H_S;
 		snake_list <= "00000000000000000";
 		new_H_s	<= H_s;
@@ -2535,7 +2475,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                <= '0';   
-                remove_item_clear	 		                <= '0';
+                remove_power_up_clear	 		                <= '0';
 		new_corner_count				<= corner_count;
 		new_n				<= n;
 				new_tail_check				<= "000000";
@@ -2582,9 +2522,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 
             when state_1 =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '1';
-                item_send_flag <= '0';
+                
+                
+                
                 head <= H_S;
 		new_H_s	<= H_s;
                 item_out_food <= I_S(0);
@@ -2595,7 +2535,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                <= '0';   
-                remove_item_clear	 		                <= '0';
+                remove_power_up_clear	 		                <= '0';
 		new_N				<= std_logic_vector(unsigned(N) + 1 );
 		new_corner_count				<= corner_count;
 				new_send_tail				<= '0';
@@ -2643,9 +2583,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 end if;
 
             when state_wait2 =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '0';
-                item_send_flag <= '0';
+                
+                
+                
                 head <= H_S;
 		new_H_s	<= H_s;
 		snake_list <= "00000000000000000";
@@ -2657,7 +2597,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                 <= '0';   
-                remove_item_clear               <= '0';
+                remove_power_up_clear               <= '0';
 		new_corner_count				<= corner_count;
 		new_n				<= n;
 				new_send_tail				<= '0';
@@ -2702,9 +2642,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 end if;
 
 	    when tail_check2 =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '0';
-                item_send_flag <= '0';
+                
+                
+                
                 head <= H_S;
 		new_H_s	<= H_s;
 		snake_list <= "00000000000000000";
@@ -2716,7 +2656,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                <= '0';   
-                remove_item_clear	 		               <= '0';
+                remove_power_up_clear	 		               <= '0';
 		new_corner_count				<= corner_count;
 		new_n				<= n;
 				new_tail_check				<= "000000";
@@ -2761,9 +2701,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 		new_state <= state_2;
 
             when state_2 =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '1';
-                item_send_flag <= '0';
+                
+                
+                
                 head <= H_S;
 		new_H_s	<= H_s;
                 item_out_food <= I_S(0);
@@ -2774,7 +2714,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                 <= '0';   
-                remove_item_clear                <= '0';
+                remove_power_up_clear                <= '0';
 		new_N				<= std_logic_vector(unsigned(N) + 1 );
 		new_corner_count				<= corner_count;
 				new_tail_check				<= "000000";
@@ -2828,9 +2768,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 
             when state_wait3 =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '0';
-                item_send_flag <= '0';
+                
+                
+                
                 head <= H_S;
 		new_H_s	<= H_s;
                 item_out_food <= I_S(0);
@@ -2842,7 +2782,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                 <= '0';   
-                remove_item_clear                <= '0';
+                remove_power_up_clear                <= '0';
                 new_n				<= n;
 		new_corner_count				<= corner_count;
 				new_send_tail				<= '0';
@@ -2886,9 +2826,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 end if;
 
 	    when tail_check3 =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '0';
-                item_send_flag <= '0';
+                
+                
+                
                 head <= H_S;
 		new_H_s	<= H_s;
 		snake_list <= "00000000000000000";
@@ -2900,7 +2840,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                <= '0';   
-                remove_item_clear	 		                <= '0';
+                remove_power_up_clear	 		                <= '0';
 		new_corner_count				<= corner_count;
 		new_n				<= n;
 				new_tail_check				<= "000000";
@@ -2946,9 +2886,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 		new_state <= state_3;
 
             when state_3 =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '1';
-                item_send_flag <= '0';
+                
+             
+                
                 head <= H_S;
 		new_H_s	<= H_s;
                 item_out_food <= I_S(0);
@@ -2959,7 +2899,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                <= '0';   
-                remove_item_clear                <= '0';
+                remove_power_up_clear                <= '0';
 		new_N			<= std_logic_vector(unsigned(N) + 1 );
 		new_corner_count				<= corner_count;
 				new_T				<= T;
@@ -3021,9 +2961,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 end if;
 
             	when state_wait =>
-                head_send_flag    <= '0';
-                snake_send_flag <= '0';
-                item_send_flag <= '0';
+                
+               
+                
                 head <= H_S;
 		new_H_s	<= H_s;
 		snake_list <= "00000000000000000";
@@ -3035,7 +2975,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
                 clear_corner_flag                <= '0';        
                 clear_tail_flag                <= '0';       
                 new_item_clear	                <= '0';   
-                remove_item_clear                <= '0';
+                remove_power_up_clear                <= '0';
 		new_corner_count				<= corner_count;
 		new_n				<= n;
 				new_send_tail				<= '0';
@@ -3081,9 +3021,9 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 
 
 			when others =>
-				head_send_flag	<= '0';
-				snake_send_flag <= '0';
-				item_send_flag <= '0';
+				
+				
+				
 				head <= H_S;
 				new_H_s	<= H_s;
 				snake_list <= "00000000000000000";
@@ -3094,7 +3034,7 @@ process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corne
 				clear_head_flag 				<= '0';	
 				clear_corner_flag				<= '0'; 		
 				clear_tail_flag				<= '0';		
-				remove_item_clear	 			<= '0';	
+				remove_power_up_clear	 			<= '0';	
 				new_item_clear				<= '0';
 				send_new_corner_clear				<= '0';
 				new_corner_count				<= corner_count;
