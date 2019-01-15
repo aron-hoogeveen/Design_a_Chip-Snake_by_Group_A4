@@ -34,7 +34,7 @@ begin
 	end if;
 end process;
 
-process (snake_list, state, clear_flag_sl, clear_flag_so)
+process (snake_list, state, clear_flag_sl, clear_flag_so, flg_ok_tail)
 
 
 begin
