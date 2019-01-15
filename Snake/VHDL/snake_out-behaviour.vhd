@@ -52,7 +52,6 @@ case state is
 	when idle =>
 	
 		clr_flag_coc <= '0';
-		flag_g <= '0';
 		flag_chc <= '0';
 		tail_out <= '0';
 		
@@ -69,7 +68,6 @@ case state is
 	when set_flags_with_tail =>
 
 		clr_flag_coc <= '0';
-		flag_g <= '1';
 		flag_chc <= '1';
 		tail_out <= '1';
 		
@@ -92,7 +90,6 @@ case state is
 		clr_flag_coc <= '0';
 		flag_chc <= '0';
 		tail_out <= '0';
-		flag_g <= '1';
 
 		if clr_flag_g = '1' then
 			next_state <= clear;
@@ -103,7 +100,6 @@ case state is
 	when wait_chc_with_tail =>
 	
 		clr_flag_coc <= '0';
-		flag_g <= '0';
 		tail_out <= '1';
 		flag_chc <= '1';
 
@@ -116,7 +112,6 @@ case state is
 	when set_flags =>
 
 		clr_flag_coc <= '0';
-		flag_g <= '1';
 		flag_chc <= '1';
 		tail_out <= '0';
 		
@@ -139,7 +134,6 @@ case state is
 		clr_flag_coc <= '0';
 		flag_chc <= '0';
 		tail_out <= '0';
-		flag_g <= '1';
 
 		if clr_flag_g = '1' then
 			next_state <= clear;
@@ -150,7 +144,6 @@ case state is
 	when wait_chc =>
 	
 		clr_flag_coc <= '0';
-		flag_g <= '0';
 		tail_out <= '0';
 		flag_chc <= '1';
 
@@ -163,7 +156,6 @@ case state is
 	when clear =>
 
 		clr_flag_coc <= '1';
-		flag_g <= '0';
 		flag_chc <= '0';
 		tail_out <= '0';
 
@@ -172,7 +164,6 @@ case state is
 	when others =>
 	
 		clr_flag_coc <= '0';
-		flag_g <= '0';
 		flag_chc <= '0';
 		tail_out <= '0';
 
