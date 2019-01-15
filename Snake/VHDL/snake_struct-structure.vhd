@@ -88,7 +88,7 @@ signal food	: std_logic;
 signal inversion_sig : std_logic;
 signal buttons_s : std_logic_vector(1 downto 0);
 signal buffed_input : std_logic_vector(3 downto 0);
-signal button_input : std_logic_vector(3 downto 0);
+--signal button_input : std_logic_vector(3 downto 0);
 
 begin
 comp_speed: speed
