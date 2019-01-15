@@ -129,5 +129,6 @@ comp_button_react: button_react
 
 new_head <= sig_new_head;		--signal tap to output
 new_head_temp <= new_head(11 downto 2);	--signal to col_detect
+move_out <= move_speed;
 end structure;
 
