@@ -26,16 +26,14 @@ begin
             if (reset = '1') then
                 state <= IDLE;
                 inter_s <= UNDEFINED;
-                collision <= '0';
             else
                 state <= new_state;
                 inter_s <= new_inter_s;
-                collision <= new_collision;
             end if;
         end if;
     end process;
 
-    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, new_tail_food_clear)
+    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, new_tail_food_clear, inter_s)
     begin
         case state is
 --======================================================================
@@ -63,6 +61,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -99,6 +98,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
                 --------------------
                 -- LOGIC
@@ -169,6 +169,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
                 --------------------
                 -- LOGIC
@@ -200,6 +201,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
                 --------------------
                 -- LOGIC
@@ -231,6 +233,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
                 --------------------
                 -- LOGIC
@@ -262,6 +265,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
                 --------------------
                 -- LOGIC
@@ -293,6 +297,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
                 --------------------
                 -- LOGIC
@@ -328,6 +333,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 ----
+                st_powerup_set          <= '0';
 
                 --------------------
                 -- LOGIC
@@ -393,6 +399,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -459,6 +466,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -603,6 +611,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -635,6 +644,7 @@ begin
                 --
                 sp_increase_speed_set   <= '1';     -- Power-up increase speed
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -667,6 +677,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -699,6 +710,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -731,16 +743,58 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
                 -- LOGIC
                 --------------------
                 if (ig_item_clear = '1') then
-                    new_state <= IDLE;
+                    new_state <= WAIT_FOR_STORAGE;
                 else
                     new_state <= WAIT_FOR_ITEMGEN;
                 end if;
+
+
+--======================================================================
+--==========             WAIT_FOR_STORAGE           ====================
+--======================================================================
+            when WAIT_FOR_STORAGE =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                br_new_head_clear       <= '0';
+                br_new_head_ok          <= '0';
+                br_inverse_controls_set <= '0';
+                --
+                food_collision          <= '0';
+                new_tail_food           <= '0';
+                --
+                gr_flickering_set       <= '0';
+
+                --
+                ig_item_loc_clear       <= '0';
+                ig_item_ok              <= '0';
+                ig_item_set             <= '0';
+                ig_item_type            <= '0';
+                --
+                so_range_clear          <= '0';
+                --
+                sp_increase_speed_set   <= '0';
+                --
+                st_powerup_set          <= '1';     -- Let Storage delete the power up
+                --
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                if (st_powerup_clear = '1') then
+                    new_state <= IDLE;
+                else
+                    new_state <= WAIT_FOR_STORAGE;
+                end if;
+
 
 --======================================================================
 --==========             WAIT_FOR_ITEMGEN_FOOD      ====================
@@ -767,6 +821,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -803,7 +858,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-
+                st_powerup_set          <= '0';
 
                 --------------------
                 -- LOGIC
@@ -835,6 +890,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -867,6 +923,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
@@ -899,6 +956,7 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
+                st_powerup_set          <= '0';
 
 
                 --------------------
