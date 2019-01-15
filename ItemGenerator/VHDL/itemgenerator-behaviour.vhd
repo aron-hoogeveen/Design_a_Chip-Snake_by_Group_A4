@@ -148,7 +148,7 @@ begin
                 register_enable                 <= '1';
                 register_D                      <= rng_out;
                 --
-                countfps_start                  <= '0';
+                countfps_start                  <= '1';             -- This additional start signal will reset the countfps counter
                 --
 
 
