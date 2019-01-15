@@ -12,7 +12,7 @@ use IEEE.std_logic_arith.ALL;
 use IEEE.std_logic_unsigned.ALL;
 
 architecture behaviour of col_detect is
-    type col_detect_state is (IDLE, CHECK_COL_WALL, COL_IG, COL_BR, COL_FOOD, CHECK_COL_ITEM_ONE_REQ, CHECK_COL_ITEM_ONE, CHECK_COL_ITEM_TWO_REQ, CHECK_COL_ITEM_TWO, CHECK_COL_SNAKE, REQ_NEW_PART, PU_SPEED, PU_INV_CONTROLS, PU_FLICK, WAIT_FOR_ITEMGEN, WAIT_FOR_GRAPHICS, RESULT_SUCCES_IG, RESULT_SUCCES_BR, RESULT_COLLISION_IG, RESULT_COLLISION_BR);
+    type col_detect_state is (IDLE, CHECK_COL_WALL, COL_IG, COL_BR, COL_FOOD, CHECK_COL_ITEM_ONE, CHECK_COL_ITEM_TWO, CHECK_COL_SNAKE, REQ_NEW_PART, PU_SPEED, PU_INV_CONTROLS, PU_FLICK, WAIT_FOR_ITEMGEN, WAIT_FOR_GRAPHICS, RESULT_SUCCES_IG, RESULT_SUCCES_BR, RESULT_COLLISION_IG, RESULT_COLLISION_BR);
     signal state, new_state: col_detect_state;
     type col_detect_inter_t is (UNDEFINED, ITEMGEN, BUTTONREACT);
     signal inter_s, new_inter_s: col_detect_inter_t;
@@ -35,7 +35,7 @@ begin
         end if;
     end process;
 
-    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_clear, st_item_exists, st_item_type, st_item_loc, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, gr_flickering_clear)
+    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, gr_flickering_clear)
     begin
         case state is
 --======================================================================
@@ -62,9 +62,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -100,9 +97,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
                 --------------------
                 -- LOGIC
@@ -116,7 +110,7 @@ begin
                         new_state <= COL_IG;
                     else
                         -- Check for a collision with item one
-                        new_state <= CHECK_COL_ITEM_ONE_REQ;
+                        new_state <= CHECK_COL_ITEM_ONE;
                     end if;
                 elsif (br_new_head_set = '1') then
                     -- BUTTON REACT
@@ -127,7 +121,7 @@ begin
                         new_state <= COL_BR;
                     else
                         -- Check for a collision with item one
-                        new_state <= CHECK_COL_ITEM_ONE_REQ;
+                        new_state <= CHECK_COL_ITEM_ONE;
                     end if;
                 end if;
 
@@ -156,9 +150,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
                 --------------------
                 -- LOGIC
@@ -189,9 +180,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
                 --------------------
                 -- LOGIC
@@ -222,53 +210,11 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
                 --------------------
                 -- LOGIC
                 --------------------
                 new_state <= IDLE;
-
---======================================================================
---==========          CHECK_COL_ITEM_ONE_REQ        ====================
---======================================================================
-            when CHECK_COL_ITEM_ONE_REQ =>
-                --------------------
-                -- SIGNAL VALUES
-                --------------------
-                br_new_head_clear       <= '0';
-                br_new_head_ok          <= '0';
-                br_inverse_controls_set <= '0';
-                --
-                food_collision          <= '0';
-                --
-                gr_flickering_set       <= '0';
-                --
-                ig_item_loc_clear       <= '0';
-                ig_item_ok              <= '0';
-                ig_item_set             <= '0';
-                ig_item_type            <= '0';
-                --
-                so_range_clear          <= '0';
-                --
-                sp_increase_speed_set   <= '0';
-                --
-                st_item_req             <= '1';     -- Request an item defined by st_item_no 
-                st_item_no              <= '0';     -- Item number 1 (food item)
-                ----
-
-                --------------------
-                -- LOGIC
-                --------------------
-                -- Wait for storage to send the item
-                if (st_item_set = '1') then
-                    new_state <= CHECK_COL_ITEM_ONE;
-                else
-                    new_state <= CHECK_COL_ITEM_ONE_REQ;
-                end if;
-
 
 --======================================================================
 --==========          CHECK_COL_ITEM_ONE            ====================
@@ -293,35 +239,34 @@ begin
                 so_range_clear          <= '0';
                 --
                 sp_increase_speed_set   <= '0';
-                --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
                 ----
 
                 --------------------
                 -- LOGIC
                 --------------------
-                if (st_item_exists = '1') then
+                if (st_item_one(11 downto 2) = "0000000000") then
+                    new_state <= CHECK_COL_ITEM_TWO;
+                else
                     if (inter_s = ITEMGEN) then
-                        if (st_item_loc = ig_item_loc) then
+                        if (st_item_one(11 downto 2) = ig_item_loc) then
                             -- Location is not free
                             new_state <= COL_IG;
                         else
                             -- Check for a collision with the second item
-                            new_state <= CHECK_COL_ITEM_TWO_REQ;
+                            new_state <= CHECK_COL_ITEM_TWO;
                         end if;
                     --elsif (inter_s = BUTTONREACT) then
                     else
                         -- inter_s = probably BUTTONREACT
-                        if (st_item_loc = br_new_head_loc) then
-                            -- Collision with power-up
-                            if (st_item_type = "00") then
+                        if (st_item_one(11 downto 2) = br_new_head_loc) then
+                            -- Collision with item
+                            if (st_item_one(1 downto 0) = "00") then
                                 -- Food item
                                 new_state <= COL_FOOD;
-                            elsif (st_item_type = "01") then
+                            elsif (st_item_one(1 downto 0) = "01") then
                                 -- Power-up of type Speed Increase
                                 new_state <= PU_SPEED;
-                            elsif (st_item_type = "10") then
+                            elsif (st_item_one(1 downto 0) = "10") then
                                 -- Power-up of type Inverse Controls
                                 new_state <= PU_INV_CONTROLS;
                             else
@@ -333,47 +278,6 @@ begin
                             new_state <= CHECK_COL_SNAKE;
                         end if;
                     end if;
-                else
-                    -- No first item in the field
-                    new_state <= CHECK_COL_ITEM_TWO_REQ;
-                end if;
-
---======================================================================
---==========          CHECK_COL_ITEM_TWO_REQ        ====================
---======================================================================
-            when CHECK_COL_ITEM_TWO_REQ =>
-                --------------------
-                -- SIGNAL VALUES
-                --------------------
-                br_new_head_clear       <= '0';
-                br_new_head_ok          <= '0';
-                br_inverse_controls_set <= '0';
-                --
-                food_collision          <= '0';
-                --
-                gr_flickering_set       <= '0';
-                --
-                ig_item_loc_clear       <= '0';
-                ig_item_ok              <= '0';
-                ig_item_set             <= '0';
-                ig_item_type            <= '0';
-                --
-                so_range_clear          <= '0';
-                --
-                sp_increase_speed_set   <= '0';
-                --
-                st_item_req             <= '1';     -- Request an item defined by st_item_no 
-                st_item_no              <= '1';     -- Item number 2
-                ----
-
-                --------------------
-                -- LOGIC
-                --------------------
-                -- Wait for storage to send the item
-                if (st_item_set = '1') then
-                    new_state <= CHECK_COL_ITEM_TWO;
-                else
-                    new_state <= CHECK_COL_ITEM_TWO_REQ;
                 end if;
 
 --======================================================================
@@ -400,17 +304,16 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
                 -- LOGIC
                 --------------------
-                if (st_item_exists = '1') then
+                if (st_item_two(11 downto 2) = "0000000000") then
+                    new_state <= CHECK_COL_SNAKE;
+                else
                     if (inter_s = ITEMGEN) then
-                        if (st_item_loc = ig_item_loc) then
+                        if (st_item_two(11 downto 2) = ig_item_loc) then
                             -- Location is not free
                             new_state <= COL_IG;
                         else
@@ -420,15 +323,15 @@ begin
                     --elsif (inter_s = BUTTONREACT) then
                     else
                         -- inter_s = probably BUTTONREACT
-                        if (st_item_loc = br_new_head_loc) then
+                        if (st_item_two(11 downto 2) = br_new_head_loc) then
                             -- Collision with power-up
-                            if (st_item_type = "00") then
+                            if (st_item_two(1 downto 0) = "00") then
                                 -- Food item
                                 new_state <= COL_FOOD;
-                            elsif (st_item_type = "01") then
+                            elsif (st_item_two(1 downto 0) = "01") then
                                 -- Power-up of type Speed Increase
                                 new_state <= PU_SPEED;
-                            elsif (st_item_type = "10") then
+                            elsif (st_item_two(1 downto 0) = "10") then
                                 -- Power-up of type Inverse Controls
                                 new_state <= PU_INV_CONTROLS;
                             else
@@ -440,9 +343,6 @@ begin
                             new_state <= CHECK_COL_SNAKE;
                         end if;
                     end if;
-                else
-                    -- No second item in the field
-                    new_state <= CHECK_COL_SNAKE;
                 end if;
 
 --======================================================================
@@ -469,9 +369,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -615,9 +512,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -649,9 +543,6 @@ begin
                 --
                 sp_increase_speed_set   <= '1';     -- Power-up increase speed
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -683,9 +574,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -717,9 +605,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -751,9 +636,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -789,9 +671,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -827,9 +706,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -861,9 +737,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -895,9 +768,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------
@@ -929,9 +799,6 @@ begin
                 --
                 sp_increase_speed_set   <= '0';
                 --
-                st_item_req             <= '0';
-                st_item_no              <= '0';
-                ----
 
 
                 --------------------

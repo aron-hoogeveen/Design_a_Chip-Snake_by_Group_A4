@@ -73,145 +73,51 @@ architecture behaviour of col_detect_tb is
    signal st_item_no              : std_logic;
 begin
 test: col_detect port map (clk, reset, br_new_head_set, br_new_head_loc, br_new_head_clear, br_new_head_ok, br_inverse_controls_set, food_collision, gr_flickering_clear, gr_flickering_set, ig_item_loc_set, ig_item_loc, ig_item_clear, ig_item_loc_clear, ig_item_ok, ig_item_set, ig_item_type, x_range, y_range, so_tail, so_range_set, so_range_clear, sp_increase_speed_set, st_item_clear, st_item_exists, st_item_type, st_item_loc, st_item_set, st_item_req, st_item_no);
-   clk <= '0' after 0 ns,
-          '1' after 40 ns when clk /= '1' else '0' after 40 ns;
+   clk <= '1' after 0 ns,
+          '0' after 40 ns when clk /= '0' else '1' after 40 ns;
+
    reset <= '1' after 0 ns,
-   	  '0' after 160 ns;
-   br_new_head_set <= '1' after 160 ns;
-   br_new_head_loc(0) <= '0' after 0 ns,
-		       '1' after 400 ns,
-		       '0' after 640 ns,
-		       '1' after 880 ns;
-   br_new_head_loc(1) <= '0' after 0 ns,
-	               '1' after 400 ns,
-		       '0' after 640 ns,
-		       '1' after 880 ns;
-   br_new_head_loc(2) <= '0' after 0 ns,
-		       '0' after 400 ns,
-		       '0' after 640 ns,
-		       '1' after 880 ns;
-   br_new_head_loc(3) <= '0' after 0 ns,
-		       '0' after 400 ns,
-		       '0' after 640 ns,
-		       '0' after 880 ns;
-   br_new_head_loc(4) <= '0' after 0 ns,
-		       '1' after 400 ns,
-		       '0' after 640 ns,
-		       '0' after 880 ns;
-   br_new_head_loc(5) <= '0' after 0 ns,
-		       '0' after 400 ns,
-		       '0' after 640 ns,
-                       '0' after 880 ns;
-   br_new_head_loc(6) <= '0' after 0 ns,
-		       '1' after 400 ns,
-		       '0' after 640 ns,
-                       '0' after 880 ns;
-   br_new_head_loc(7) <= '0' after 0 ns,
-		       '1' after 400 ns,
-		       '0' after 640 ns,
-		       '0' after 880 ns;
-   br_new_head_loc(8) <= '0' after 0 ns,
-                       '0' after 400 ns,
-		       '0' after 640 ns,
-                       '1' after 880 ns;
-   br_new_head_loc(9) <= '0' after 0 ns,
-		       '0' after 400 ns,
-		       '0' after 640 ns,
-		       '1' after 880 ns;
+   	        '0' after 160 ns;
+
+   ig_item_loc_set <= '0' after 0 ns,
+                      '1' after 160 ns,
+                      '0' after 320 ns,
+                      '1' after 480 ns,
+                      '0' after 640 ns;
+
+   ig_item_loc <= (others => '0') after 0 ns,
+                  "0010000100" after 480 ns;
+
+
+
+
+   br_new_head_set <= '0' after 0 ns;
+
+   br_new_head_loc <= (others => '0') after 0 ns;
+
    gr_flickering_clear <= '0' after 0 ns;
-   ig_item_loc_set <= '1' after 160 ns,
-		    '0' after 240 ns,
-		    '1' after 320 ns,
-		    '0' after 640 ns;
-   ig_item_loc(0) <= '0' after 160 ns,
- 		   '1' after 320 ns,
-		   '0' after 880 ns;
-   ig_item_loc(1) <= '0' after 160 ns,
-   	           '1' after 320 ns,
-	           '0' after 880 ns;
-   ig_item_loc(2) <= '0' after 160 ns,
-                   '0' after 320 ns,
-		   '0' after 880 ns;
-   ig_item_loc(3) <= '0' after 160 ns,
-		     '0' after 320 ns,
-		     '1' after 880 ns;
-   ig_item_loc(4) <= '0' after 160 ns,
-		   '1' after 320 ns,
-		   '0' after 880 ns;
-   ig_item_loc(5) <= '0' after 160 ns,
-		   '0' after 320 ns,
-		   '0' after 880 ns;
-   ig_item_loc(6) <= '0' after 160 ns,
-		   '1' after 320 ns,
-		   '0' after 880 ns;
-   ig_item_loc(7) <= '0' after 160 ns,
-		   '1' after 320 ns,
-		   '1' after 880 ns;
-   ig_item_loc(8) <= '0' after 160 ns,
-		   '0' after 320 ns,
-		   '1' after 880 ns;
-   ig_item_loc(9) <= '0' after 160 ns,
-		   '0' after 320 ns,
-		   '1' after 880 ns;
+
    ig_item_clear <= '0' after 0 ns;
-   x_range(0) <= '0' after 0 ns,
-	       '1' after 880 ns;
-   x_range(1) <= '0' after 0 ns,
-	      '0' after 880 ns;
-   x_range(2) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   x_range(3) <= '0' after 0 ns,
-	         '0' after 880 ns;
-   x_range(4) <= '0' after 0 ns,
-	         '1' after 880 ns;
-   x_range(5) <= '0' after 0 ns,
-		 '1' after 880 ns;
-   x_range(6) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   x_range(7) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   x_range(8) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   x_range(9) <= '0' after 0 ns,
-	       '1' after 880 ns;
-   y_range(0) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   y_range(1) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   y_range(2) <= '0' after 0 ns,
-	       '1' after 880 ns;
-   y_range(3) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   y_range(4) <= '0' after 0 ns,
-	       '1' after 880 ns;
-   y_range(5) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   y_range(6) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   y_range(7) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   y_range(8) <= '0' after 0 ns,
-	       '0' after 880 ns;
-   y_range(9) <= '0' after 0 ns,
-	       '1' after 880 ns;
-   so_tail <= '0' after 0 ns,
- 	    '1' after 1040 ns;
-   so_range_set <= '0' after 0 ns,
-		 '1' after 1040 ns;
+
+   x_range <= (others => '0') after 0 ns;
+
+   y_range <= (others => '0') after 0 ns;
+   
+   so_tail <= '0' after 0 ns;
+
+   so_range_set <= '0' after 0 ns;
+
    st_item_clear <= '0' after 0 ns;
-   st_item_exists <= '1' after 160 ns;
-   st_item_type(0) <= '0' after 0 ns;
-   st_item_type(1) <= '0' after 0 ns;
-   st_item_loc(0) <= '0' after 0 ns;
-   st_item_loc(1) <= '0' after 0 ns;
-   st_item_loc(2) <= '0' after 0 ns;
-   st_item_loc(3) <= '0' after 0 ns;
-   st_item_loc(4) <= '0' after 0 ns;
-   st_item_loc(5) <= '0' after 0 ns;
-   st_item_loc(6) <= '0' after 0 ns;
-   st_item_loc(7) <= '0' after 0 ns;
-   st_item_loc(8) <= '0' after 0 ns;
-   st_item_loc(9) <= '0' after 0 ns;
-   st_item_set <= '0' after 0 ns;
+
+   st_item_exists <= '0' after 0 ns,
+                     '1' after 720 ns;
+
+   st_item_type <= "00" after 0 ns;
+
+   st_item_loc <= (others => '0') after 0 ns,
+                  "0010000100" after 720 ns;
+
+   st_item_set <= '0' after 0 ns,
+                  '1' after 720 ns;
 end behaviour;
 

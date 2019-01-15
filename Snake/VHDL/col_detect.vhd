@@ -31,13 +31,8 @@ entity col_detect is
         so_range_clear          : out std_logic;
 
         sp_increase_speed_set   : out std_logic;
-
-        st_item_clear           : in std_logic;
-        st_item_exists          : in std_logic;
-        st_item_type            : in std_logic_vector(1 downto 0);
-        st_item_loc             : in std_logic_vector(9 downto 0);
-        st_item_set             : in std_logic;
-        st_item_req             : out std_logic;
-        st_item_no              : out std_logic);
+        
+        st_item_one             : in std_logic_vector(11 downto 0);
+        st_item_two             : in std_logic_vector(11 downto 0));
 end col_detect;
 
