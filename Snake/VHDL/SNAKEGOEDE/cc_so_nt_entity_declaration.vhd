@@ -14,7 +14,6 @@ entity cc_so_nt is
         snake_list     : in  std_logic_vector(16 downto 0);
         flg_new_tail   : out std_logic;
         flg_check_col  : out std_logic;
-        flg_graphics   : out std_logic;
         flg_tail_chc   : out std_logic;
 	clr_food 	     : out std_logic;
         flag_next_list : out std_logic;

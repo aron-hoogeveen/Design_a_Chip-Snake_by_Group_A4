@@ -9,7 +9,6 @@ entity snake_total is
 	clr_flg_str_nt : in  std_logic;
         snake_list     : in  std_logic_vector(16 downto 0);
         flg_new_tail   : out std_logic;
-        flg_graphics   : out std_logic;
         flag_next_list : out std_logic;
         x_bounds       : out std_logic_vector(9 downto 0);
         y_bounds       : out std_logic_vector(9 downto 0);
