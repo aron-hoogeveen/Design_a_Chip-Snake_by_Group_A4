@@ -12,7 +12,7 @@ use IEEE.std_logic_arith.ALL;
 use IEEE.std_logic_unsigned.ALL;
 
 architecture behaviour of col_detect is
-    type col_detect_state is (IDLE, CHECK_COL_WALL, COL_IG, COL_BR, COL_FOOD, CHECK_COL_ITEM_ONE, CHECK_COL_ITEM_TWO, CHECK_COL_SNAKE, REQ_NEW_PART, PU_SPEED, PU_INV_CONTROLS, PU_FLICK, WAIT_FOR_ITEMGEN, WAIT_FOR_ITEMGEN_FOOD, RESULT_SUCCES_IG, RESULT_SUCCES_BR, RESULT_COLLISION_IG, RESULT_COLLISION_BR, ERROR_FALL_BACK);
+    type col_detect_state is (IDLE, CHECK_COL_WALL, COL_IG, COL_BR, COL_FOOD, COL_FOOD_TAIL, CHECK_COL_ITEM_ONE, CHECK_COL_ITEM_TWO, CHECK_COL_SNAKE, REQ_NEW_PART, PU_SPEED, PU_INV_CONTROLS, PU_FLICK, WAIT_FOR_ITEMGEN, WAIT_FOR_ITEMGEN_FOOD, RESULT_SUCCES_IG, RESULT_SUCCES_BR, RESULT_COLLISION_IG, RESULT_COLLISION_BR, ERROR_FALL_BACK);
     signal state, new_state: col_detect_state;
     type col_detect_inter_t is (UNDEFINED, ITEMGEN, BUTTONREACT);
     signal inter_s, new_inter_s: col_detect_inter_t;
@@ -35,7 +35,7 @@ begin
         end if;
     end process;
 
-    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc)
+    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, new_tail_food_clear)
     begin
         case state is
 --======================================================================
@@ -50,6 +50,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -85,6 +86,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -154,6 +156,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -184,6 +187,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -214,6 +218,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -244,13 +249,14 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '1';     -- Food is opgegeten (only needs to be high for 1 clock period)
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
                 ig_item_loc_clear       <= '0';
                 ig_item_ok              <= '0';
-                ig_item_set             <= '1';     -- Request a food item generation
-                ig_item_type            <= '0';     -- food item
+                ig_item_set             <= '0';
+                ig_item_type            <= '0';
                 --
                 so_range_clear          <= '0';
                 --
@@ -260,7 +266,42 @@ begin
                 --------------------
                 -- LOGIC
                 --------------------
-                new_state <= WAIT_FOR_ITEMGEN_FOOD;
+                new_state <= COL_FOOD_TAIL;
+
+--======================================================================
+--==========                COL_FOOD_TAIL           ====================
+--======================================================================
+            when COL_FOOD_TAIL =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                br_new_head_clear       <= '0';
+                br_new_head_ok          <= '0';
+                br_inverse_controls_set <= '0';
+                --
+                food_collision          <= '0';
+                new_tail_food           <= '1';     -- set
+                --
+                gr_flickering_set       <= '0';
+                --
+                ig_item_loc_clear       <= '0';
+                ig_item_ok              <= '0';
+                ig_item_set             <= '0';
+                ig_item_type            <= '0';
+                --
+                so_range_clear          <= '0';
+                --
+                sp_increase_speed_set   <= '0';
+                --
+
+                --------------------
+                -- LOGIC
+                --------------------
+                if (new_tail_food_clear = '1') then
+                    new_state <= WAIT_FOR_ITEMGEN_FOOD;
+                else
+                    new_state <= COL_FOOD_TAIL;
+                end if;
 
 --======================================================================
 --==========          CHECK_COL_ITEM_ONE            ====================
@@ -274,6 +315,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -338,6 +380,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -403,6 +446,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -546,6 +590,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -577,6 +622,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -608,6 +654,7 @@ begin
                 br_inverse_controls_set <= '1';     -- Power-up inverse controls
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -639,6 +686,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '1';     -- Power-up flickering 
                 --
@@ -670,6 +718,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -705,13 +754,14 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
                 ig_item_loc_clear       <= '0';
                 ig_item_ok              <= '0';
-                ig_item_set             <= '1';
-                ig_item_type            <= '0';
+                ig_item_set             <= '1';         --
+                ig_item_type            <= '0';         --
                 --
                 so_range_clear          <= '0';
                 --
@@ -740,6 +790,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -771,6 +822,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -802,6 +854,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --
@@ -833,6 +886,7 @@ begin
                 br_inverse_controls_set <= '0';
                 --
                 food_collision          <= '0';
+                new_tail_food           <= '0';
                 --
                 gr_flickering_set       <= '0';
                 --

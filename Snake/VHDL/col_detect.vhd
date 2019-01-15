@@ -12,6 +12,8 @@ entity col_detect is
         br_inverse_controls_set : out std_logic;
 
         food_collision          : out std_logic;
+        new_tail_food           : out std_logic;
+        new_tail_food_clear     : in std_logic;
 
         gr_flickering_set       : out std_logic;
 
@@ -28,6 +30,7 @@ entity col_detect is
         so_tail                 : in std_logic;
         so_range_set            : in std_logic;
         so_range_clear          : out std_logic;
+        collision_food          : out std_logic;
 
         sp_increase_speed_set   : out std_logic;
         
