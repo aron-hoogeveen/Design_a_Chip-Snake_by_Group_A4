@@ -20,5 +20,5 @@ entity button_react is
 	new_head_flag				: out std_logic;
 	chc_flag				: out std_logic);
 
-end button_reactv2;
+end button_react;
 

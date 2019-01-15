@@ -19,7 +19,6 @@ entity snake_struct is
         corner         : out std_logic_vector(5 downto 0);
         corner_flag    : out std_logic;
         new_head_flag  : out std_logic;
-        length         : out std_logic_vector(5 downto 0);
         ig_loc_clear   : out std_logic;
         ig_item_clear   : in std_logic;
         ig_item_ok     : out std_logic;

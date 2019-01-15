@@ -9,13 +9,13 @@ begin
 	begin
 	  if(rising_edge(clk)) then
 	    if (reset = '1') then
-		length_out <= "000011";
+		  length_out <= "000011";
 	    else
-	      if (collision_food = "01") then
-		  length_out <= std_logic_vector(unsigned(length_out) + 1);
+	      if (collision_food = '1') then
+		      length_out <= std_logic_vector(unsigned(length_out) + 1);
 	      end if;
 	    end if;
-          end if;
+      end if;
   end process;
 len <= length_out;
 

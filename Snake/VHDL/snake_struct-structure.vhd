@@ -6,8 +6,7 @@ component speed is
    port(clk            : in  std_logic;
         reset          : in  std_logic;
         collision_food : in  std_logic; 
-        move           : out std_logic;
-	length_out	    : out std_logic_vector(5 downto 0));
+        move           : out std_logic);
 end component;
 
 component col_detect is
@@ -96,8 +95,7 @@ comp_speed: speed
 	port map(clk            => clk,
         		 reset          => reset,
        		 collision_food => food,
-        		 move           => move_speed,
-		 length_out		=> length);
+        		 move           => move_speed);
 
 comp_col_detect: col_detect
 	port map(clk                    => clk,

@@ -6,7 +6,7 @@ architecture structure of speed is
 component length is
    port(reset          : in  std_logic;
         clk            : in  std_logic;
-        collision_food : in  std_logic_vector(1 downto 0);
+        collision_food : in  std_logic;
         len            : out std_logic_vector(5 downto 0));
 end component;
 
@@ -34,7 +34,6 @@ comp_speed: pulse_speed
 		 speed 		=> move,
 		 reset 		=> reset);
 		 
-length_out <= len_sig;				--signal tap to output
 
 end structure;
 
