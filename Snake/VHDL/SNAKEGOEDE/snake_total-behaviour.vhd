@@ -47,7 +47,6 @@ component cc_so_nt is
         snake_list     : in  std_logic_vector(16 downto 0);
         flg_new_tail   : out std_logic;
         flg_check_col  : out std_logic;
-        flg_graphics   : out std_logic;
         flg_tail_chc   : out std_logic;
 	clr_food 	     : out std_logic;
         flag_next_list : out std_logic;
@@ -81,7 +80,7 @@ snake_right_strcture: snake_struct port map(clk => clk, reset => reset, head => 
 
 cc_so_nt_combi : cc_so_nt port map(clk => clk, reset => reset, clr_flg_str_cc => clr_flg_str_cc, clr_flg_grp_so => clr_flg_grp_so, clr_flg_chc_so => clr_flg_chc_so_s, clr_flg_str_nt => clr_flg_str_nt, 
 				move => move_s, collision_food => collision_f_s, snake_list => snake_list, 
-				flg_new_tail => flg_new_tail, flg_check_col => flg_chc_s, flg_graphics => flg_graphics, 
+				flg_new_tail => flg_new_tail, flg_check_col => flg_chc_s,
 				flg_tail_chc => flg_tail_chc_s, clr_food => clr_food_s, flag_next_list => flag_next_list,
 				x_bounds => x_range_s, y_bounds => y_range_s, new_tail_o => new_tail_o );
 
