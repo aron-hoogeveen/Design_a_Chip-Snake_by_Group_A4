@@ -12,7 +12,7 @@ use IEEE.std_logic_arith.ALL;
 use IEEE.std_logic_unsigned.ALL;
 
 architecture behaviour of col_detect is
-    type col_detect_state is (IDLE, CHECK_COL_WALL, COL_IG, COL_BR, COL_FOOD, CHECK_COL_ITEM_ONE, CHECK_COL_ITEM_TWO, CHECK_COL_SNAKE, REQ_NEW_PART, PU_SPEED, PU_INV_CONTROLS, PU_FLICK, WAIT_FOR_ITEMGEN, WAIT_FOR_GRAPHICS, RESULT_SUCCES_IG, RESULT_SUCCES_BR, RESULT_COLLISION_IG, RESULT_COLLISION_BR);
+    type col_detect_state is (IDLE, CHECK_COL_WALL, COL_IG, COL_BR, COL_FOOD, CHECK_COL_ITEM_ONE, CHECK_COL_ITEM_TWO, CHECK_COL_SNAKE, REQ_NEW_PART, PU_SPEED, PU_INV_CONTROLS, PU_FLICK, WAIT_FOR_ITEMGEN, WAIT_FOR_ITEMGEN_FOOD, RESULT_SUCCES_IG, RESULT_SUCCES_BR, RESULT_COLLISION_IG, RESULT_COLLISION_BR, ERROR_FALL_BACK);
     signal state, new_state: col_detect_state;
     type col_detect_inter_t is (UNDEFINED, ITEMGEN, BUTTONREACT);
     signal inter_s, new_inter_s: col_detect_inter_t;
@@ -260,7 +260,7 @@ begin
                 --------------------
                 -- LOGIC
                 --------------------
-                new_state <= IDLE;
+                new_state <= WAIT_FOR_ITEMGEN_FOOD;
 
 --======================================================================
 --==========          CHECK_COL_ITEM_ONE            ====================
@@ -656,7 +656,7 @@ begin
                 --------------------
                 -- LOGIC
                 --------------------
-                new_state <= WAIT_FOR_GRAPHICS;
+                new_state <= WAIT_FOR_ITEMGEN;
 
 --======================================================================
 --==========             WAIT_FOR_ITEMGEN           ====================
@@ -675,8 +675,8 @@ begin
                 --
                 ig_item_loc_clear       <= '0';
                 ig_item_ok              <= '0';
-                ig_item_set             <= '0';
-                ig_item_type            <= '0';
+                ig_item_set             <= '1';
+                ig_item_type            <= '1';
                 --
                 so_range_clear          <= '0';
                 --
@@ -694,9 +694,9 @@ begin
                 end if;
 
 --======================================================================
---==========             WAIT_FOR_GRAPHICS          ====================
+--==========             WAIT_FOR_ITEMGEN_FOOD      ====================
 --======================================================================
-            when WAIT_FOR_GRAPHICS =>
+            when WAIT_FOR_ITEMGEN_FOOD =>
                 --------------------
                 -- SIGNAL VALUES
                 --------------------
@@ -710,7 +710,7 @@ begin
                 --
                 ig_item_loc_clear       <= '0';
                 ig_item_ok              <= '0';
-                ig_item_set             <= '0';
+                ig_item_set             <= '1';
                 ig_item_type            <= '0';
                 --
                 so_range_clear          <= '0';
@@ -722,10 +722,10 @@ begin
                 --------------------
                 -- LOGIC
                 --------------------
-                if (gr_flickering_clear = '1') then
-                    new_state <= WAIT_FOR_ITEMGEN;
+                if (ig_item_clear = '1') then
+                    new_state <= IDLE;
                 else
-                    new_state <= WAIT_FOR_GRAPHICS;
+                    new_state <= WAIT_FOR_ITEMGEN_FOOD;
                 end if;
 
 --======================================================================
