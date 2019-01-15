@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 
-architecture behaviour of snake_out_27 is
+architecture behaviour of snake_out is
 
 type snake_out_state is (idle, set_flags, set_flags_with_tail, wait_chc, wait_g, wait_chc_with_tail, wait_g_with_tail, clear);
 signal state, next_state: snake_out_state;
