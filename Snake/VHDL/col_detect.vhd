@@ -13,7 +13,6 @@ entity col_detect is
 
         food_collision          : out std_logic;
 
-        gr_flickering_clear     : in std_logic;
         gr_flickering_set       : out std_logic;
 
         ig_item_loc_set         : in std_logic;

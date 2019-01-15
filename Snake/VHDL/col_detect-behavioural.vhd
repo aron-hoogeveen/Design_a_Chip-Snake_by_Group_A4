@@ -35,7 +35,7 @@ begin
         end if;
     end process;
 
-    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, gr_flickering_clear)
+    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc)
     begin
         case state is
 --======================================================================
