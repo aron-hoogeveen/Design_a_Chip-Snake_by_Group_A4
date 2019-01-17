@@ -21,7 +21,7 @@ begin
         end if;
     end process;
 
-    lbl2: process (state, start, fps)
+    lbl2: process (state, start, fps, tmp)
     begin
         case state is 
             when IDLE =>

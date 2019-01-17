@@ -56,7 +56,7 @@ begin
         end if;
     end process;
 
-    lbl_itemgen_state: process (state, snake_item_set, snake_req_item, snake_item_loc_clear, snake_item_ok, storage_item_clear, countfps_done, counter_out)
+    lbl_itemgen_state: process (state, snake_item_set, snake_req_item, snake_item_loc_clear, snake_item_ok, storage_item_clear, countfps_done, counter_out, rng_out, register_Q)
     begin
         case state is
 --======================================================================
