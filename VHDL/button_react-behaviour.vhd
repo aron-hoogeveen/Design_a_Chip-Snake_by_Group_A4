@@ -34,7 +34,7 @@ end process;
 --end process;
 
 
-process (buttons, head)
+process (buttons, head, xtoInt, ytoInt, inversion)
 
 begin
 
@@ -89,7 +89,7 @@ begin
 	end if;
 end process;
 
-process (state, move, buttons, head, new_head_clr_flag, corner_clr_flag, chc_clr_flag, ytoInt, xtoInt, inversion, head_ok)
+process (state, move, buttons, head, new_head_clr_flag, corner_clr_flag, chc_clr_flag, ytoInt, xtoInt, inversion, head_ok, corner_exists)
 
 begin
 
