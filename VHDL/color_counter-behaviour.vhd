@@ -40,7 +40,7 @@ end process;
 ------------------------------------
 -- Map new_color_cnt_in to color_cnt_in --
 ------------------------------------
-process(clk, pulse_60hz, enable)
+process(clk, pulse_60hz, enable, color_cnt_in)
 begin
 
 	if(enable = '1')then

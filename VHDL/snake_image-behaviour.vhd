@@ -12,7 +12,7 @@ begin
 loc_x_L <= 10*unsigned(snake_x_loc(4 downto 0));
 loc_x_H <= 10*unsigned(snake_x_loc(9 downto 5));
 loc_y_L <= 20*unsigned(snake_y_loc(4 downto 0));
-loc_y_H <= 10*unsigned(snake_y_loc(9 downto 5));
+loc_y_H <= 20*unsigned(snake_y_loc(9 downto 5));
 
 -- process that defines the FSM
 	process(state, h_count, v_count, loc_x_L, loc_x_H, loc_y_L, loc_y_H)
@@ -37,7 +37,7 @@ loc_y_H <= 10*unsigned(snake_y_loc(9 downto 5));
 					if(unsigned(v_count) >= loc_y_H + 20) then
 						next_state <= flag_state;
 					else
-						next_state <= reset_state;
+						next_state <= state;
 						
 					end if;
 				else
