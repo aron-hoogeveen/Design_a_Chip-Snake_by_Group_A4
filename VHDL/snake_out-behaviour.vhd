@@ -43,7 +43,7 @@ begin
 	end if;
 end process;
 
-process (state, flag_coc, clr_flag_g, clr_flag_chc) -- determines when the x and y bounds are passed on to graphics and check collision
+process (state, flag_coc, clr_flag_g, clr_flag_chc, tail) -- determines when the x and y bounds are passed on to graphics and check collision
 
 begin
 
@@ -161,13 +161,6 @@ case state is
 
 		next_state <= idle;
 	
-	when others =>
-	
-		clr_flag_coc <= '0';
-		flag_chc <= '0';
-		tail_out <= '0';
-
-		next_state <= idle;		
 end case;
 end process;
 end architecture behaviour;
