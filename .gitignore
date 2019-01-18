@@ -32,3 +32,6 @@
 *_[cC][fF][gG]*.vhd
 *_[sS][yY][nN]*.vhd
 *_[pP][aA][rR]*.vhd
+
+# Ignore vhd backup files
+*.vhd_
