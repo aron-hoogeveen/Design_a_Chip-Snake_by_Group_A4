@@ -550,7 +550,7 @@ begin
                                 end if;
                             else
                                 -- No collision
-                                if (so_tail <= '1') then
+                                if (so_tail = '1') then
                                     new_state <= RESULT_SUCCES_IG;
                                 else 
                                     new_state <= REQ_NEW_PART;
@@ -573,7 +573,7 @@ begin
                                 end if;
                             else
                                 -- No collision
-                                if (so_tail <= '1') then
+                                if (so_tail = '1') then
                                     new_state <= RESULT_SUCCES_BR;
                                 else 
                                     new_state <= REQ_NEW_PART;

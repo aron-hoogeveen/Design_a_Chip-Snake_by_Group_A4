@@ -96,11 +96,12 @@ test: col_detect port map (clk, reset, br_new_head_set, br_new_head_loc, br_new_
 
    ig_item_clear <= '0' after 0 ns;
 
-   x_range <= "0000000000" after 0 ns;
+   x_range <= "0011001000" after 0 ns;
 
-   y_range <= "0000000000" after 0 ns;
+   y_range <= "1000010000" after 0 ns;
 
-   so_tail <= '0' after 0 ns;
+   so_tail <= '0' after 0 ns,
+              '1' after 2960 ns;
 
    so_range_set <= '0' after 0 ns,
                    '1' after 160 ns;
@@ -108,7 +109,7 @@ test: col_detect port map (clk, reset, br_new_head_set, br_new_head_loc, br_new_
    st_item_one <= "110111101100" after 0 ns;
 
    st_item_two <= "001000010001" after 0 ns,
-                  "000100010001" after 1480 ns;
+                  "000100010001" after 1280 ns;
 
    st_powerup_clear <= '0' after 0 ns;
 end behaviour;
