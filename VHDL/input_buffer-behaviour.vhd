@@ -18,12 +18,15 @@ end process;
 process(clk)
 begin
 	if rising_edge(clk) then
-		input_buf(3) <= s3;
-		input_buf(2) <= s2;
-		input_buf(1) <= s1;
-		input_buf(0) <= s0;
+			if(reset = '1') then
+				input_buf <= (others => '0');
+			else	
+				input_buf(3) <= s3;
+				input_buf(2) <= s2;
+				input_buf(1) <= s1;
+				input_buf(0) <= s0;
+			end if;
 	end if;
 end process;
 
 end behaviour;
-
