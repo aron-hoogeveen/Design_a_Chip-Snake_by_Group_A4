@@ -20,7 +20,7 @@ begin
 when idle_state =>
 
 	enable	<= '0';
-	if((flicker = '1') or (color_cnt_in(9 downto 7) >= to_unsigned(6, 3))) then
+	if((flicker = '1') or (color_cnt_in(9 downto 7) < to_unsigned(7, 3))) then
 		next_state <= cnt_state;
 	else 
 		next_state <= idle_state;
