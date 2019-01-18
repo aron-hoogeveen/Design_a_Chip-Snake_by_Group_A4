@@ -10,7 +10,7 @@ signal state, next_state : color_state;
 signal flick_cnt : unsigned(6 downto 0);
 begin
 	flick_cnt <= unsigned(color_cnt);
-	process(state, video_on, snake, item, item_type, flick_cnt)
+	process(state, video_on, snake, item, item_type, flick_cnt, enable_flick)
 	begin
 		case state is
 
@@ -18,7 +18,7 @@ begin
 			when field_black =>
 				red	<= '0';
 				green	<= '0';
-				blue <= '0';
+				blue 	<= '0';
 
 				------------------------------------
 				if(enable_flick = '1') then
@@ -276,13 +276,6 @@ begin
 				else 
 					next_state <= state;
 				end if;
-
-			when others =>
-				red	<= '0';
-				green	<= '0';
-				blue <= '0';
-		
-				next_state <= field_black;
 		end case;
 	end process;
 
