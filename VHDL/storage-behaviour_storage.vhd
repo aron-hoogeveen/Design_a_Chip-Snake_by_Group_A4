@@ -138,7 +138,7 @@ process (clk, reset)
 		end if;
 end process;
 
-process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corner_flag, remove_power_up_flag, new_head, new_corner, new_tail, new_item, state, S_S(0), S_S(1), S_S(2), S_S(3), S_S(4), S_S(5), S_S(6), S_S(7), S_S(8), S_S(9), S_S(10), S_S(11), S_S(12), S_S(13), S_S(14), S_S(15), S_S(16), S_S(17), S_S(18), S_S(19), S_S(20), S_S(21), S_S(22), S_S(23), S_S(24), corner_check, tail_check, N, corner_count, H_S, I_S(1), I_S(0), send_tail, T)
+process (new_head_flag, new_corner_flag, new_tail_flag, new_item_set, send_corner_flag, remove_power_up_flag, new_head, new_corner, new_tail, new_item, state, S_S(0), S_S(1), S_S(2), S_S(3), S_S(4), S_S(5), S_S(6), S_S(7), S_S(8), S_S(9), S_S(10), S_S(11), S_S(12), S_S(13), S_S(14), S_S(15), S_S(16), S_S(17), S_S(18), S_S(19), S_S(20), S_S(21), S_S(22), S_S(23), S_S(24), corner_check, tail_check, N, corner_count, H_S, I_S(1), I_S(0), send_tail, T, tail_input)
 	begin
 		case state is
 			when reset_state =>
