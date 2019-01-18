@@ -1,6 +1,6 @@
 library IEEE;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
+use IEEE.std_logic_1164.ALL;
+use IEEE.numeric_std.ALL;
 
 architecture behaviour_new_tail of new_tail is
 
@@ -23,7 +23,7 @@ new_tail_concatenate_x2 <= tail (9 downto 5) & std_logic_vector(to_signed(decrea
 new_tail_concatenate_y1 <= std_logic_vector(to_signed(increase_x_tail, 5)) &  tail (4 downto 0); -- tail with increased x coordinate
 new_tail_concatenate_y2 <= std_logic_vector(to_signed(decrease_x_tail, 5)) & tail (4 downto 0); -- tail with decreased x coordinate
 
-process (flag_tail, tail, last_corner, new_tail_concatenate_x1, new_tail_concatenate_x2, new_tail_concatenate_y1, new_tail_concatenate_y2)
+process (flag_tail, tail, last_corner, new_tail_concatenate_x1, new_tail_concatenate_x2, new_tail_concatenate_y1, new_tail_concatenate_y2, new_tail_out_s)
 begin
 		if (tail (9 downto 5) = last_corner (9 downto 5) ) then -- if x lc = x tail -- 
 			if (last_corner (4 downto 0) > tail (4 downto 0) ) then -- if y lc > y tail --
@@ -43,7 +43,7 @@ begin
 			new_tail_out (5 downto 1) <= 	new_tail_out_s (4 downto 0); -- new_tail gives y coordinate -- 
 			new_tail_out (0) <= '1';
 		else                                        								-- then y tail = y new tail
-			new_tail_out (5 downto 1) <= new_tail_out_s (9 downto 5);  -- new_tail gives x coordinate --
+			new_tail_out (5 downto 1) <= new_tail_out_s (9 downto 5); -- new_tail gives x coordinate --
 			new_tail_out (0) <= '0';
 		end if;
 
