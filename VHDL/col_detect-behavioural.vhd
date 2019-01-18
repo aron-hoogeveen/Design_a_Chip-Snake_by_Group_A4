@@ -33,7 +33,7 @@ begin
         end if;
     end process;
 
-    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, new_tail_food_clear, inter_s)
+    lbl_col_detect_state: process (state, ig_item_loc_set, ig_item_loc, ig_item_clear, st_item_one, st_item_two, x_range, y_range, so_range_set, so_tail, br_new_head_set, br_new_head_loc, new_tail_food_clear, inter_s, st_powerup_clear)
     begin
         case state is
 --======================================================================
@@ -368,8 +368,8 @@ begin
                                 new_state <= PU_FLICK;
                             end if;
                         else
-                            -- Check for a collision with the snake's body
-                            new_state <= CHECK_COL_SNAKE;
+                            -- Check for a collision with the second item
+                            new_state <= CHECK_COL_ITEM_TWO;
                         end if;
                     end if;
                 end if;
