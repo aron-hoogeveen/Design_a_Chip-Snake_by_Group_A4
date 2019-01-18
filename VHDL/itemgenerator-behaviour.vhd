@@ -29,7 +29,7 @@ architecture behaviour of itemgenerator is
         port (clk, reset : in std_logic; z : out std_logic);
     end component;
 
-    type itemGenerator_state is (IDLE, START_TIMER, SHIFT_FOOD_ONE, SHIFT_FOOD_TWO, GEN_LOC, GEN_LOC_ZERO, CHECK_LOC, SHIFT_REG_ONE, SHIFT_REG_TWO, SEND_LOC, GEN_PU, GEN_PU_ZERO, GEN_PU_RNG);
+    type itemGenerator_state is (RESET_STATE, INITIALISE_FOOD, INITIALISE_PU, IDLE, START_TIMER, SHIFT_FOOD_ONE, SHIFT_FOOD_TWO, GEN_LOC, GEN_LOC_ZERO, CHECK_LOC, SHIFT_REG_ONE, SHIFT_REG_TWO, SEND_LOC, GEN_PU, GEN_PU_ZERO, GEN_PU_RNG);
     signal state, new_state: itemGenerator_state;
     signal counter_out: std_logic_vector(3 downto 0);
     signal counter_enable, counter_reset, register_enable, register_D: std_logic;
@@ -49,7 +49,7 @@ begin
     begin
         if (rising_edge(clk)) then
             if (reset = '1') then
-                state <= IDLE;
+                state <= RESET_STATE;
             else
                 state <= new_state;
             end if;
@@ -59,6 +59,101 @@ begin
     lbl_itemgen_state: process (state, snake_item_set, snake_req_item, snake_item_loc_clear, snake_item_ok, storage_item_clear, countfps_done, counter_out, rng_out, register_Q)
     begin
         case state is
+--======================================================================
+--==========                    RESET_STATE                   ==========
+--======================================================================
+            when RESET_STATE =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                snake_item_clear                <= '0';
+                snake_item_loc_set              <= '0';
+                snake_item_loc                  <= (others => '0');
+                --
+                storage_item_set                <= '0';
+                storage_item_loc                <= (others => '0');
+                --
+                counter_reset                   <= '0';
+                counter_enable                  <= '0';
+                --
+                register_enable                 <= '0';
+                register_D                      <= '0';
+                --
+                countfps_start                  <= '0';
+                --
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                new_state <= INITIALISE_FOOD;
+
+--======================================================================
+--==========                   INITIALISE_FOOD                ==========
+--======================================================================
+            when INITIALISE_FOOD =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                snake_item_clear                <= '0';
+                snake_item_loc_set              <= '0';
+                snake_item_loc                  <= (others => '0');
+                --
+                storage_item_set                <= '1';
+                storage_item_loc                <= "101001110000";  -- (20,28)
+                --
+                counter_reset                   <= '0';
+                counter_enable                  <= '0';
+                --
+                register_enable                 <= '0';
+                register_D                      <= '0';
+                --
+                countfps_start                  <= '0';
+                --
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                if (storage_item_clear = '1') then
+                    new_state <= INITIALISE_PU;
+                else 
+                    new_state <= INITIALISE_FOOD;
+                end if;
+
+--======================================================================
+--==========                   INITIALISE_PU                  ==========
+--======================================================================
+when INITIALISE_PU =>
+                --------------------
+                -- SIGNAL VALUES
+                --------------------
+                snake_item_clear                <= '0';
+                snake_item_loc_set              <= '0';
+                snake_item_loc                  <= (others => '0');
+                --
+                storage_item_set                <= '1';
+                storage_item_loc                <= "001000010011";  -- (20,28), flickering
+                --
+                counter_reset                   <= '0';
+                counter_enable                  <= '0';
+                --
+                register_enable                 <= '0';
+                register_D                      <= '0';
+                --
+                countfps_start                  <= '0';
+                --
+
+
+                --------------------
+                -- LOGIC
+                --------------------
+                if (storage_item_clear = '1') then
+                    new_state <= IDLE;
+                else 
+                    new_state <= INITIALISE_PU;
+                end if;
+
 --======================================================================
 --==========                    IDLE                          ==========
 --======================================================================

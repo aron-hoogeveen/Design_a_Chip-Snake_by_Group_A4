@@ -62,6 +62,8 @@ test: itemgenerator port map (clk, reset, countfps_fps, snake_item_set, snake_re
               '0' after 2640 ns;
 
    storage_item_clear <= '0' after 0 ns,
+                         '1' after 240 ns,
+                         '0' after 400 ns,
                      '1' after 2800 ns,
                      '0' after 2880 ns;
 
