@@ -1,5 +1,5 @@
 library IEEE;
-use IEEE.std_logic_1164.all;
+use IEEE.std_logic_1164.ALL;
 
 architecture behaviour_corner_calc of corner_calc is
 
@@ -34,7 +34,7 @@ begin
 	end if;
 end process;
 
-process (snake_list, state, clear_flag_sl, clear_flag_so)
+process (snake_list, state, clear_flag_sl, clear_flag_so, flg_ok_tail)
 
 
 begin
