@@ -5,7 +5,7 @@ use IEEE.numeric_std.all;
 architecture behaviour of button_react is
 
 component moveCounter is
-	port(clk, reset, start, move : in std_logic; z_out : out std_logic);
+	port(clk, reset, start, fps : in std_logic; z_out : out std_logic);
 end component;
 
 type button_react_state is (idle, set_flags, waitHead, waitCor, sendChc, waitMove, gameOver);
@@ -15,7 +15,7 @@ signal corner_exists, invertedControls, count_start, next_count_start : std_logi
 
 begin
 
-moveCount: moveCounter port map (clk=>clk, reset=>reset, start=>count_start, move=>move, z_out=>invertedControls);
+moveCount: moveCounter port map (clk=>clk, reset=>reset, start=>count_start, fps=>fps, z_out=>invertedControls);
 
 process (clk)
 begin 	
@@ -95,7 +95,7 @@ begin
 	end if;
 end process;
 
-process (state, move, buttons, head, new_head_clr_flag, corner_clr_flag, chc_clr_flag, ytoInt, xtoInt, inversion, head_ok, corner_exists, invertedControls, count_start)
+process (state, buttons, head, new_head_clr_flag, corner_clr_flag, chc_clr_flag, ytoInt, xtoInt, inversion, head_ok, move, corner_exists, invertedControls, count_start, fps)
 
 begin
 

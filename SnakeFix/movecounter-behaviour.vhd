@@ -6,7 +6,7 @@ use IEEE.std_logic_unsigned.ALL;
 architecture behaviour of movecounter is
 type counter_state is (IDLE, COUNT, DONE);
     signal state, new_state : counter_state;
-    signal tmp, new_tmp : std_logic_vector(5 downto 0);
+    signal tmp, new_tmp : std_logic_vector(10 downto 0);
 begin
     lbl1: process (clk)
     begin
@@ -21,7 +21,7 @@ begin
         end if;
     end process;
 
-    lbl2: process (state, start, move)
+    lbl2: process (state, start, fps)
     begin
         case state is 
             when IDLE =>
@@ -48,7 +48,7 @@ begin
 		--"111111"
                 if (new_tmp = "000011") then
                     new_state <= DONE;
-                elsif (move = '1') then
+                elsif (fps = '1') then
                     new_tmp <= tmp + 1;
 
                     new_state <= COUNT;
