@@ -4,37 +4,43 @@ use IEEE.numeric_std.all;
 
 architecture behaviour of button_react is
 
+component moveCounter is
+	port(clk, reset, start, fps : in std_logic; z_out : out std_logic);
+end component;
+
 type button_react_state is (idle, set_flags, waitHead, waitCor, sendChc, waitMove, gameOver);
 signal state, next_state: button_react_state;
 signal ytoInt, xtoInt: unsigned(4 downto 0);
-signal corner_exists : std_logic;
+signal corner_exists, invertedControls, count_start, next_count_start : std_logic;
 
 begin
 
-process (clk) 
+moveCount: moveCounter port map (clk=>clk, reset=>reset, start=>count_start, fps=>fps, z_out=>invertedControls);
+
+process (clk)
 begin 	
 	if (rising_edge (clk)) then
 		if (reset = '1') then
 			state <= idle;
+			count_start <= '0';
 		else
-			--if (rising_edge (move)) then
-			--	state <= calc_new_head;
-			--else
-				state <= next_state;
-			--end if;
+			state <= next_state;
+			count_start <= next_count_start;
 		end if;
 	end if;
 end process;
 
---process (move) 
---begin 	
---	if (rising_edge (move)) then
---		next_state <= calc_new_head;
---	end if;
---end process;
+process (inversion)
+begin 	
+	if (inversion = '1') then
+		next_count_start <= '1';
+	else
+		next_count_start <= '0';
+	end if;
+end process;
 
 
-process (buttons, head, xtoInt, ytoInt, inversion)
+process (buttons, head, xtoInt, ytoInt, invertedControls)
 
 begin
 
@@ -57,7 +63,7 @@ begin
 		end if;
 	else
 		corner_exists <= '1';
-		if(inversion = '0') then
+		if(invertedControls = '0') then
 			if buttons = "00" then
 				new_head <= std_logic_vector(xtoInt + 1) & head(6 downto 2) & "00";
 				corner <= head(11 downto 7) & '0';
@@ -89,7 +95,7 @@ begin
 	end if;
 end process;
 
-process (state, move, buttons, head, new_head_clr_flag, corner_clr_flag, chc_clr_flag, ytoInt, xtoInt, inversion, head_ok, corner_exists)
+process (state, buttons, head, new_head_clr_flag, corner_clr_flag, chc_clr_flag, ytoInt, xtoInt, inversion, head_ok, move, corner_exists, invertedControls, count_start, fps)
 
 begin
 

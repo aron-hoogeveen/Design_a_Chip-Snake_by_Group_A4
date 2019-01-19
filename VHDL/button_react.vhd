@@ -18,7 +18,8 @@ entity button_react is
 	corner 				: out std_logic_vector(5 downto 0);
 	corner_flag				: out std_logic;
 	new_head_flag				: out std_logic;
-	chc_flag				: out std_logic);
+	chc_flag				: out std_logic;
 
+	fps				: in std_logic);
 end button_react;
 
