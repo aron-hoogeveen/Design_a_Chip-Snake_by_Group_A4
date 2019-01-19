@@ -94,7 +94,8 @@ component snake_total is
         new_head       : out std_logic_vector(11 downto 0);
         gr_flicker_set : out std_logic;
 		  st_powerup_clear : in std_logic;
-		  st_powerup_set :  out std_logic);
+		  st_powerup_set :  out std_logic;
+	fps		: in std_logic);
 end component;
 
 signal snake_x_loc : std_logic_vector(9 downto 0);
@@ -218,6 +219,7 @@ SNAKE_TOTAL_LABEL :snake_total
         new_head       => new_head_link,
         gr_flicker_set => gr_flicker_set_link,
 		  st_powerup_clear => powerup_clear_link,
-		  st_powerup_set   => st_powerup_set_link);
+		  st_powerup_set   => st_powerup_set_link,
+	fps		=> pulse_60_hz);
 end structure;
 

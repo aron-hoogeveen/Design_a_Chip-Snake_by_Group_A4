@@ -62,7 +62,8 @@ port(		clk			: in std_logic;
 		corner 			: out std_logic_vector(5 downto 0);
 		corner_flag			: out std_logic;					
 		new_head_flag			: out std_logic;					
-		chc_flag			: out std_logic);				
+		chc_flag			: out std_logic;
+		fps			: in std_logic);				
 end component;
 
 component processed_in is
@@ -89,6 +90,7 @@ signal food	: std_logic;
 signal inversion_sig : std_logic;
 signal buttons_s : std_logic_vector(1 downto 0);
 signal buffed_input : std_logic_vector(3 downto 0);
+--signal fps_s		: std_logic;
 --signal button_input : std_logic_vector(3 downto 0);
 
 begin
@@ -148,7 +150,8 @@ comp_button_react: button_react
 		 corner 			=> corner,
 		 corner_flag			=> corner_flag,			
 		 new_head_flag			=> new_head_flag,				
-		 chc_flag			=> sig_head_flag);
+		 chc_flag			=> sig_head_flag,
+		 fps			=> fps);
 		 
 comp_processed_in: processed_in
 	port map(clk => clk,

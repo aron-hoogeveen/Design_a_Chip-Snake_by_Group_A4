@@ -34,7 +34,8 @@ component snake_struct is
 	new_tail_food		  : out std_logic;
 	new_tail_food_clear : in std_logic;
 		st_powerup_clear : in std_logic;
-		  st_powerup_set :  out std_logic);
+		  st_powerup_set :  out std_logic;
+	fps			: in std_logic);
 end component snake_struct;
 
 component cc_so_nt is
@@ -78,7 +79,7 @@ snake_right_strcture: snake_struct port map(clk => clk, reset => reset, head => 
 				ig_loc_clear => ig_loc_clear, ig_item_clear => ig_item_clear, ig_item_ok => ig_item_ok, 
 				ig_item_set => ig_item_set, ig_item_type => ig_item_type, 
 				so_range_clear => clr_flg_chc_so_s, new_head => new_head, 
-				gr_flickering_set => gr_flicker_set, move_out => move_s, new_tail_food => collision_f_s, new_tail_food_clear => clr_food_s, st_powerup_clear => st_powerup_clear, st_powerup_set => st_powerup_set); ----
+				gr_flickering_set => gr_flicker_set, move_out => move_s, new_tail_food => collision_f_s, new_tail_food_clear => clr_food_s, st_powerup_clear => st_powerup_clear, st_powerup_set => st_powerup_set, fps => fps); ----
 
 	
 cc_so_nt_combi : cc_so_nt port map(clk => clk, reset => reset, clr_flg_str_cc => clr_flg_str_cc, clr_flg_grp_so => clr_flg_grp_so, clr_flg_chc_so => clr_flg_chc_so_s, clr_flg_str_nt => clr_flg_str_nt, 

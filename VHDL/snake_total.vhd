@@ -32,7 +32,8 @@ entity snake_total is
         new_head       : out std_logic_vector(11 downto 0);
         gr_flicker_set : out std_logic;
 		  st_powerup_clear : in std_logic;
-		  st_powerup_set :  out std_logic);
+		  st_powerup_set :  out std_logic;
+	fps		: in std_logic);
 end snake_total;
 
 

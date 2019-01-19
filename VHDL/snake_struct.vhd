@@ -31,6 +31,7 @@ entity snake_struct is
         new_tail_food       : out std_logic;
         new_tail_food_clear : in std_logic;
 			st_powerup_clear : in std_logic;
-		  st_powerup_set :  out std_logic);
+		  st_powerup_set :  out std_logic;
+	fps		: in std_logic);
 end snake_struct;
 
