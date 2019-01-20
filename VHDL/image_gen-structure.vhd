@@ -9,9 +9,9 @@ architecture structure of image_gen is
         			reset 			   : in  std_logic;
 		 	  video_on   			 : in  std_logic;
         			location_in 			 : in  std_logic_vector(11 downto 0);
-        			location_pow_in : in  std_logic_vector(11 downto 0);
+        			location_pow_in 			: in  std_logic_vector(11 downto 0);
         			h_count    			 : in  std_logic_vector(8 downto 0);
-        	  v_count    		 	: in  std_logic_vector(9 downto 0);
+        	 		 v_count    		 	: in  std_logic_vector(9 downto 0);
 		  	  item_type	 		  :	out	std_logic_vector(1 downto 0);
         			item      			  : out std_logic);
 	end component;
@@ -20,25 +20,25 @@ architecture structure of image_gen is
    		port(clk        : in  std_logic;
         		 reset      : in  std_logic;
         		 video_on   : in  std_logic;
-        		 snake_x_loc 				: in  std_logic_vector(9 downto 0);
-        		 snake_y_loc				: in  std_logic_vector(9 downto 0);
+        		 snake_x_loc 		: in  std_logic_vector(9 downto 0);
+        		 snake_y_loc		: in  std_logic_vector(9 downto 0);
         		 h_count    : in  std_logic_vector(8 downto 0);
         		 v_count    : in  std_logic_vector(9 downto 0);
         		 snake     	: out std_logic;
-		     clr_flag 		: out std_logic);
+		 clr_flag 		: out std_logic);
 	end component;
 
 	component color_gen is
    	 port(clk          : in 	std_logic;
-     		   reset     			: in  std_logic;
-        		snake     			: in  std_logic;
-	       item      			: in  std_logic;
-		    item_type 			: in 	std_logic_vector(1 downto 0);
-		    pulse_60hz 		: in 	std_logic;
+     	reset 	: in  std_logic;
+        snake     	: in  std_logic;
+	item      		: in  std_logic;
+	item_type 		: in 	std_logic_vector(1 downto 0);
+	pulse_60hz 		: in 	std_logic;
           video_on  			: in  std_logic;
           color_cnt 		 :	in 	std_logic_vector(6 downto 0);
-		    enable_flick : in 	std_logic;
-		    red       		 : out std_logic;
+	 enable_flick : in 	std_logic;
+	 red       		 : out std_logic;
           green     		 : out std_logic;
           blue      		 : out std_logic);
 	end component;
@@ -83,16 +83,16 @@ snake: snake_image
 
 rgb: color_gen
 	port map(clk      	  => clk,
-      			   reset    	  => reset,
-        			 snake    	  => snake_inter,
-        			 item     	  => item_inter,
-			 	item_type   => item_type_inter,
-			 	pulse_60hz  => pulse_60hz,
-        			 video_on 	  => video_on,
-			 	color_cnt   => color_cnt_inter,
-			 	enable_flick	=> flick_enable,
-        			 red      	  => red,
-        			 green    	  => green,
+      		 reset    	  => reset,
+        	 snake    	  => snake_inter,
+        	 item     	  => item_inter,
+		 item_type   => item_type_inter,
+		 pulse_60hz  => pulse_60hz,
+        	 video_on 	  => video_on,
+		 color_cnt   => color_cnt_inter,
+		 enable_flick	=> flick_enable,
+		 red      	  => red,
+		 green    	  => green,
 	         blue    	   => blue);
 
 cnt_60hz:	color_counter
@@ -103,4 +103,3 @@ cnt_60hz:	color_counter
         			 		  color_cnt  => color_cnt_inter,
 			 		  enable_flick => flick_enable);
 end structure;
-
